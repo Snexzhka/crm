@@ -82,7 +82,7 @@ class TaskUpdateView(UserPassesTestMixin, UpdateView):
         return self.request.user.is_superuser or obj.user == self.request.user
 
     model = Task
-    fields = "title", "user", "description", "due_date", "is_completed"
+    fields = "title", "description", "due_date", "is_completed"
     template_name_suffix = "_update_form"
 
     def get_success_url(self):
