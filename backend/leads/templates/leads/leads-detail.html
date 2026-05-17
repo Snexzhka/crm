@@ -10,12 +10,30 @@
                 <h5 class="card-title fw-bold">{{ object.last_name }} {{ object.first_name }}</h5>
                 <p class="card-text">{{ object.phone }}</p>
                 <div class="d-flex justify-content-end fw-bold">{{ object.email }}</div>
-                <div class="d-flex justify-content-center fw-bold">
+                <div class="d-flex justify-content-center fw-bold gap-4">
                     <a href="/leads/{{ object.pk }}/edit" class="btn btn-primary">Редактировать</a>
+                    <a href="/leads/{{ object.pk }}/delete" class="btn btn-danger">Удалить</a>
                 </div>
             </div>
         </div>
     </div>
     <div class="col"></div>
+    <div class="d-flex justify-content fw-bold">
+        <a href="/leads/" class="btn btn-primary">Назад</a>
+    </div>
+    {% if perms.customers.add_customer %}
+        {% if not object.has_customer %}
+            {% if object.contract_set.exists %}
+                <div class="d-flex justify-content-center fw-bold mt-3">
+                    <a href="/leads/{{ object.pk }}/converts" class="btn btn-success">Перевести в активного клиента</a>
+            {% else %}
+                <div class="alert alert-warning mt-3">Для перевода необходим хотя бы один контракт.</div>
+                    <a href="{% url 'contracts:contracts_create' %}?lead={{ object.pk }}" class="btn btn-warning mt-3">Сначала создать контракт</a>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-warning mt-3">Этот лид уже переведён в активного клиента.</div>
+        {% endif %}
+    {% endif %}
+    </div>
 </div>
 {% endblock %}

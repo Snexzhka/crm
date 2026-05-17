@@ -9,13 +9,17 @@
             <div class="card-body">
                 <h5 class="card-title fw-bold">{{ object.name }}</h5>
                 <p class="card-text">{{ object.description }}</p>
-                <div class="d-flex justify-content-end fw-bold">{{ object.cost }}руб</div>
-                <div class="d-flex justify-content-center fw-bold">
+                <div class="d-flex justify-content-end fw-bold">{{object.cost}}руб</div>
+                <div class="d-flex justify-content-center fw-bold gap-4">
                     <a href="/products/{{ object.pk }}/edit" class="btn btn-primary">Редактировать</a>
+                    <a href="/products/{{ object.pk }}/delete" class="btn btn-danger">Удалить</a>
                 </div>
             </div>
         </div>
     </div>
     <div class="col"></div>
+    <div class="d-flex justify-content fw-bold">
+        <a href="/products/" class="btn btn-primary">Назад</a>
+    </div>
 </div>
 {% endblock %}

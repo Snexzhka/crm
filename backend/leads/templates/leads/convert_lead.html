@@ -1,10 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "_base.html" %}
 
-</body>
-</html>
+{% block content%}
+<h2 class="fw-bold">Перевести лида в активного клиента</h2>
+<p>Выберите контракт, заключенный с лидом <strong>{{ lead.first_name }} {{ lead.last_name }}</strong>:</p>
+<div class="row bg-white px-3 py-3 mx-2 my-5 rounded pb-5 shadow-lg">
+    <div class="col"></div>
+    <div class="col">
+        <form method="POST" action="{% url 'leads:leads-convert' lead.pk %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Перевести</button>
+            <a href="/leads/" class="btn btn-secondary">Отмена</a>
+        </form>
+    </div>
+    <div class="col"></div>
+    <div class="d-flex justify-content fw-bold">
+        <a href="/leads/" class="btn btn-primary">Назад</a>
+    </div>
+</div>
+{% endblock %}

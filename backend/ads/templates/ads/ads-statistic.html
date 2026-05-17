@@ -10,6 +10,8 @@
                 <a href="/ads/{{ ad.pk }}" class="text-decoration-none link-dark">{{ ad.name }}</a>
                 <p>Лидов: {{ ad.leads_count }} | Активных клиентов: {{ ad.customers_count }} | Соотношение контрактов к затратам: {{ ad.profit|default_if_none:"-" }}</p>
             </li>
+            {% empty %}
+            <li class="list-group-item">Нет рекламных кампаний</li>
             {% endfor %}
         </ul>
     </div>

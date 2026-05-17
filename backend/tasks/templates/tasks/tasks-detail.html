@@ -1,10 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "_base.html" %}
 
-</body>
-</html>
+{% block content %}
+<h2 class="fw-bold">Детальная информация о текущих задачах</h2>
+<div class="row bg-white px-3 py-3 mx-2 my-5 rounded pb-5 shadow-lg">
+    <div class="col"></div>
+    <div class="col">
+        <div class="card border-dark shadow" style="background: #eee">
+            <div class="card-body">
+                <h5 class="card-title fw-bold">Суть задачи - {{ object.title }}</h5>
+                <p class="card-text">Описание:{{ object.description }}</p>
+                <p class="card-text">Исполнение:{{ object.is_completed }}</p>
+                 <p class="card-text">Имя исполнителя:{{ object.user }}</p>
+                <div class="d-flex justify-content-end fw-bold">Создано -{{ object.created_at }}<br>Исполнить до:{{ object.due_date }}</div>
+                <div class="d-flex justify-content-center fw-bold gap-4">
+                    {% if user.is_superuser or task.user == user %}
+                        <a href="/tasks/{{ object.pk }}/edit" class="btn btn-primary">Редактировать</a>
+                        <a href="/tasks/{{ object.pk }}/delete" class="btn btn-danger">Удалить</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col"></div>
+    <div class="d-flex justify-content fw-bold">
+        <a href="/tasks/" class="btn btn-primary">Назад</a>
+    </div>
+</div>
+{% endblock %}

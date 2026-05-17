@@ -1,10 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "_base.html" %}
 
-</body>
-</html>
+{% block content %}
+<h2 class="fw-bold">Текущие задачи</h2>
+<div class="row bg-white px-3 py-3 mx-2 my-5 rounded pb-5 shadow-lg">
+    <div class="hstack gap-3 pb-4">
+        <a href="/tasks/new" class="btn btn-success p-2">Создать</a>
+    </div>
+    {% if pending_tasks_count > 0 %}
+        <form method="post" action="/tasks/rescheduler/" class="mb-3">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-warning">🔄 Перенести невыполненные на завтра</button>
+        </form>
+    {% endif %}
+    <div class="col">
+        <ul class="list-group">
+            {% for task in tasks %}
+            <li class="list-group-item list-group-item-light d-flex justify-content-between">
+                <a href="/tasks/{{ task.pk }}" class="text-decoration-none link-dark">Задача {{ task.title }}
+                    <p>Срок: {{ task.due_date|date:"d.m.Y" }}</p> </a>
+                    {% if task.is_completed %}
+                        <span class="badge bg-success">✓ Выполнено</span>
+                    {% else %}
+                        <span class="badge bg-warning text-dark">○ Не выполнено</span>
+                    {% endif %}
+                <a href="/tasks/{{ task.pk }}/delete" class="btn btn-danger">Удалить</a>
+            </li>
+            {% endfor %}
+        </ul>
+        <div class="d-flex justify-content fw-bold">
+        <a href='/' class="btn btn-info">Назад</a>
+    </div>
+    </div>
+</div>
+{% endblock %}
