@@ -233,7 +233,7 @@ class TaskViewTest(TestCase):
     def test_update_task_without_login(self):
         """
         Тест проверки обновления объекта задачи без авторизации.
-        Возвращает код 302.
+        Возвращает код 302 (перенаправляет на логин).
         """
         self.client.logout()
         data = {
@@ -249,6 +249,11 @@ class TaskViewTest(TestCase):
 
 
     def test_update_task_by_user(self):
+        """
+        Тест проверки обновления объекта задачи после авторизации.
+        Возвращает код 302 (перенаправляет страницу задачи).
+        Проверяется обновление определенных полей и адрес перенаправления.
+        """
         data = {
             "title": "task3",
             "description": "Desc1",
@@ -265,6 +270,11 @@ class TaskViewTest(TestCase):
 
 
     def test_update_task_admin(self):
+        """
+        Тест проверки обновления объекта задачи админом.
+        Возвращает код 302 (перенаправляет страницу задачи).
+        Проверяется обновление определенных полей и адрес перенаправления.
+        """
         data = {
                 "title": "task4",
                 "description": "Desc2",
@@ -281,12 +291,20 @@ class TaskViewTest(TestCase):
 
 
     def test_delete_task_without_login(self):
+        """
+        Тест проверки невозможности удаления задачи без авторизации.
+        Возвращает код 302 (перенаправляет на страницу авторизации).
+        """
         self.client.logout()
         response = self.client.post(reverse("tasks:tasks-delete", kwargs={"pk":self.task.pk}))
         self.assertEqual(response.status_code, 302)
 
 
     def test_delete_task(self):
+        """
+        Тест проверки возможность удаления задачи после авторизации и получения соответствующих прав.
+        Возвращает код 302 (перенаправление на список задач).
+        """
         self.login_user()
         content_type = ContentType.objects.get_for_model(Task)
         permission = Permission.objects.get(content_type=content_type, codename='delete_task')
@@ -298,6 +316,10 @@ class TaskViewTest(TestCase):
 
 
     def test_admin_delete_task(self):
+        """
+        Тест проверки возможность удаления задачи админом (получение доп.прав не требуется).
+        Возвращает код 302 (перенаправление на список задач).
+        """
         self.login_admin()
         response = self.client.post(reverse("tasks:tasks-delete", kwargs={"pk": self.task.pk}))
         self.assertEqual(response.status_code, 302)
