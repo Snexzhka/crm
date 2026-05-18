@@ -5,13 +5,14 @@ from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase, Client
 from django.contrib.auth.models import User, Permission
 from django.urls import reverse
+from django.conf import settings
 from django.utils import timezone
 
 from .models import Task
 
 class TaskModelTest(TestCase):
     """
-    Класс проверки создания моделей текущих задач.
+    Класс проверки создания объектов текущих задач.
     """
     def setUp(self):
         """
@@ -38,6 +39,7 @@ class TaskModelTest(TestCase):
         self.assertEqual(task.description, "task_for_you")
         self.assertFalse(task.is_completed)
         self.assertTrue(str(task.title))
+        self.assertTrue(Task.objects.filter(title="task1"))
 
 
 class TaskViewTest(TestCase):
@@ -109,6 +111,7 @@ class TaskViewTest(TestCase):
         self.client.logout()
         response = self.client.get(reverse("tasks:tasks-list"))
         self.assertEqual(response.status_code, 302)
+        self.assertIn(str(settings.LOGIN_URL), response.url)
 
 
     def test_list_view(self):
@@ -142,6 +145,7 @@ class TaskViewTest(TestCase):
         self.client.logout()
         response = self.client.get(reverse("tasks:tasks-detail", kwargs={"pk":self.task.pk}))
         self.assertEqual(response.status_code, 302)
+        self.assertIn(str(settings.LOGIN_URL), response.url)
 
 
     def test_task_detail(self):
@@ -166,6 +170,7 @@ class TaskViewTest(TestCase):
         self.login_admin()
         response = self.client.get(reverse("tasks:tasks-detail", kwargs={"pk": self.task.pk}))
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.task.title, "task1")
 
 
     def test_task_create_view(self):
@@ -247,6 +252,7 @@ class TaskViewTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertNotEqual(self.task.description, "Desc")
         self.assertNotEqual(self.task.title, "task3")
+        self.assertIn(str(settings.LOGIN_URL), response.url)
 
 
     def test_update_task_by_user(self):
@@ -300,6 +306,7 @@ class TaskViewTest(TestCase):
         response = self.client.post(reverse("tasks:tasks-delete", kwargs={"pk":self.task.pk}))
         self.assertEqual(response.status_code, 302)
         self.assertTrue(Task.objects.filter(title=self.task.title).exists())
+        self.assertIn(str(settings.LOGIN_URL), response.url)
 
 
     def test_delete_task(self):
