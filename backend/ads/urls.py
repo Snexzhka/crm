@@ -20,6 +20,6 @@ urlpatterns = [
     path("new/", AdventCreateView.as_view(), name="ads-create"),
     path("<int:pk>/", AdventDetail.as_view(), name="ads-detail"),
     path("<int:pk>/delete/", AdventDeleteView.as_view(), name="ads_delete"),
-    path("<int:pk>/edit/", AdvertUpdateView.as_view(), name=""),
+    path("<int:pk>/edit/", AdvertUpdateView.as_view(), name="ads-update"),
     path("statistic/", AdStatisticsView.as_view(), name="add_statistic"),
 ]
