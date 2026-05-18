@@ -2,7 +2,6 @@ import os
 import shutil
 
 from django.contrib.contenttypes.models import ContentType
-from django.shortcuts import get_object_or_404
 from django.test import TestCase, Client
 from django.contrib.auth.models import User, Permission
 from django.urls import reverse
@@ -78,8 +77,8 @@ class TaskViewTest(TestCase):
 
     def setUp(self):
         """
-        Метод создания данных перед каждым тестом заново. Создает объект задачи, т.к.
-        он может меняться после каждого теста.
+        Метод создания данных перед каждым тестом заново. Создает объект задачи, так как он
+        может меняться после каждого теста.
         """
         self.task = Task.objects.create(
             user=self.user,
@@ -208,13 +207,14 @@ class TaskViewTest(TestCase):
         self.assertTrue(Task.objects.filter(title="task2").exists())
         new_task = Task.objects.get(title="task2")
         self.assertEqual(new_task.description, "Desc")
+        self.assertRedirects(response, reverse("tasks:tasks-list"))
 
 
     def test_create_task_by_admin(self):
         """
         Тест создания объекта задачи админом. Возвращает код 302 (перенаправление на
         список задач). Проверяется существование вновь созданной задачи.
-        Админу не требуется предоставление доп.прав.
+        Админу не требуется предоставление дополнительных прав.
         """
         self.login_admin()
         data = {"user":self.user.pk,
@@ -228,6 +228,7 @@ class TaskViewTest(TestCase):
         new_task = Task.objects.get(title="task3")
         self.assertEqual(new_task.description, "Desc")
         self.assertTrue(Task.objects.filter(title="task3").exists())
+        self.assertRedirects(response, reverse("tasks:tasks-list"))
 
 
     def test_update_task_without_login(self):
@@ -298,6 +299,7 @@ class TaskViewTest(TestCase):
         self.client.logout()
         response = self.client.post(reverse("tasks:tasks-delete", kwargs={"pk":self.task.pk}))
         self.assertEqual(response.status_code, 302)
+        self.assertTrue(Task.objects.filter(title=self.task.title).exists())
 
 
     def test_delete_task(self):
@@ -317,7 +319,7 @@ class TaskViewTest(TestCase):
 
     def test_admin_delete_task(self):
         """
-        Тест проверки возможность удаления задачи админом (получение доп.прав не требуется).
+        Тест проверки возможность удаления задачи админом (получение дополнительных прав не требуется).
         Возвращает код 302 (перенаправление на список задач).
         """
         self.login_admin()
