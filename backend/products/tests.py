@@ -12,28 +12,21 @@ from .models import Product
 
 
 class ProductModelTest(TestCase):
-    """
-    Класс проверки создания объектов услуг.
-    """
-    def setUp(self):
-        """
-        Метод, устанавливающий значения перед каждым тестом заново.
-        """
-        self.product = Product.objects.create(
-            name="testProduct",
-            cost=12.21,
-        )
-
-
-    def test_add_product(self):
+    def test_create_product(self):
         """
         Тест, проверки создания объектов услуг
         """
-        self.assertEqual(self.product.pk, 1)
-        self.assertEqual(self.product.name, "testProduct")
-        self.assertEqual(self.product.description, "")
-        self.assertEqual(self.product.cost, 12.21)
-        self.assertNotEqual(self.product.name, "Product")
+        product = Product.objects.create(
+            name="testProduct",
+            description="qwerty",
+            cost=12.21,
+        )
+
+        self.assertEqual(product.pk, 1)
+        self.assertEqual(product.name, "testProduct")
+        self.assertEqual(product.description, "qwerty")
+        self.assertEqual(product.cost, 12.21)
+        self.assertNotEqual(product.name, "Product")
 
 
 class ProductTestView(TestCase):
@@ -220,7 +213,6 @@ class ProductTestView(TestCase):
         new_product = Product.objects.get(name="TestProd")
         self.assertEqual(new_product.name, "TestProd")
         self.assertEqual(new_product.cost, 120.00)
-
 
 
     def test_create_product_admin(self):
