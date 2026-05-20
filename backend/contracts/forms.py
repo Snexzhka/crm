@@ -8,3 +8,7 @@ class ContractForm(forms.ModelForm):
         model = Contract
         fields = "name", "products",  "duration", "file", "cost", "lead"
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['file'].required = False
+

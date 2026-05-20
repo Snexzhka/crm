@@ -37,6 +37,7 @@ class ContractsCreateView(PermissionRequiredMixin, CreateView):
 
     def form_valid(self, form):
         self.object = form.save()
+        print(form.errors)
         response = super().form_valid(form)
 
         return response

@@ -9,7 +9,7 @@ class Contract(models.Model):
 
     name = models.CharField(max_length=100)
     products = models.ForeignKey(Product, on_delete=models.CASCADE)
-    file = models.FileField(null=True, upload_to="contracts/file")
+    file = models.FileField(null=True, blank=True, upload_to="contracts/file")
     start_date = models.DateField(auto_now_add=True)
     duration = models.DurationField()
     cost = models.DecimalField(default=0, max_digits=8, decimal_places=2)
