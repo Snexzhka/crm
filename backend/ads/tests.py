@@ -199,7 +199,7 @@ class AdvertTestView(TestCase):
         self.client.logout()
         data = {
             "name": "testAds",
-            "products":self.product,
+            "products":self.product.pk,
             "promotion_path": "newspaper",
             "budget":150.00,
         }
