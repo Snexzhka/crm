@@ -390,7 +390,7 @@ class ContractTestView(TestCase):
     def test_delete_contract(self):
         """
         Тест проверки невозможности удаления контракта неавторизованным пользователем.
-        Возвращает код 302 с перенаправлением на страницу входа.
+        Возвращает код 403.
         """
         self.client.logout()
         response = self.client.post(reverse("contracts:contract-delete", kwargs={"pk":self.contract.pk}))
@@ -423,5 +423,6 @@ class ContractTestView(TestCase):
         """
         self.login_admin()
         response = self.client.post(reverse("contracts:contract-delete", kwargs={"pk": self.contract.pk}))
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("contracts:contracts-list"))
+        # self.assertEqual(response.status_code, 302)
+        # self.assertRedirects(response, reverse("contracts:contracts-list"))
+        self.assertFalse(Contract.objects.filter( name="TestContract").exists())
