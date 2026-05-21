@@ -110,14 +110,12 @@ class LeadsViewTest(TestCase):
     def login_operator(self):
         """
         Метод, используемый для входа под именем оператора (согласно ТЗ)
-
         """
         return self.client.login(username="Operator", password="OperatorPassword")
 
     def login_admin(self):
         """
          Метод, используемый для входа под именем админа.
-
         """
         return self.client.login(username="Admin", password="AdminPassword")
 

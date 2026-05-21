@@ -4,7 +4,6 @@ from django.db import models
 
 
 class Customer(models.Model):
-
     lead = models.ForeignKey("leads.Lead", on_delete=models.DO_NOTHING, related_name="customers")
     contract = models.ForeignKey("contracts.Contract", on_delete=models.SET_DEFAULT, default="", related_name="customers")
 
