@@ -1,6 +1,6 @@
-import pygments
 import pytest
 from django.contrib.auth.models import User
+from django.test import Client
 from pytest_django.fixtures import client
 
 from products.models import Product
@@ -45,11 +45,11 @@ def lead(db, ads):
 @pytest.fixture
 def user_admin(db):
     return User.objects.create_superuser(
-        name="Admin",
+        username="Admin",
         password="Passwort111"
     )
 
 @pytest.fixture
-def auth_user(db, user, user_admin):
-    client.login(user.username,  password="pass")
-    return client()
+def auth_user(client, user):
+    client.login(username=user.username,  password="Test1999")
+    return client
