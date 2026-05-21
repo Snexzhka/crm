@@ -10,7 +10,10 @@ from ads.models import Advert
 
 @pytest.fixture
 def user(db):
-    return User.objects.create_user(username="TestUser", password="Test1999")
+    return User.objects.create_user(
+        username="TestUser",
+             password="Test1999"
+             )
 
 
 @pytest.fixture
@@ -41,7 +44,10 @@ def lead(db, ads):
     )
 @pytest.fixture
 def user_admin(db):
-    return User.objects.create_superuser(name="Admin", password="Passwort111")
+    return User.objects.create_superuser(
+        name="Admin",
+        password="Passwort111"
+    )
 
 @pytest.fixture
 def auth_user(db, user, user_admin):
