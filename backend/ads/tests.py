@@ -299,7 +299,7 @@ class AdvertTestView(TestCase):
 
         response = self.client.post(reverse("ads:ads-update", kwargs={"pk": self.ads.pk}),
                                     data=data)
-        self.product.refresh_from_db()
+        self.ads.refresh_from_db()
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("ads:ads-detail", kwargs={"pk":self.ads.pk}))
         self.assertTrue(Advert.objects.filter(name="testAds2").exists())
@@ -324,7 +324,7 @@ class AdvertTestView(TestCase):
         response = self.client.post(reverse("ads:ads-update", kwargs={"pk": self.ads.pk}),
                                     data=data)
         self.assertEqual(response.status_code, 302)
-        self.product.refresh_from_db()
+        self.ads.refresh_from_db()
         self.assertRedirects(response, reverse("ads:ads-detail", kwargs={"pk": self.ads.pk}))
         self.assertTrue(Advert.objects.filter(name="testAds3").exists())
         update_ads = Advert.objects.get(pk=1)

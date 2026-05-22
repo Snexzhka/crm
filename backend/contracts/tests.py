@@ -352,7 +352,7 @@ class ContractTestView(TestCase):
 
         response = self.client.post(reverse("contracts:contract-update",kwargs={"pk": self.contract.pk}),
                                     data=data)
-        self.product.refresh_from_db()
+        self.contract.refresh_from_db()
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("contracts:contracts-detail", kwargs={"pk":self.contract.pk}))
         self.assertTrue(Contract.objects.filter(name="TestCont").exists())

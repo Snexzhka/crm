@@ -304,7 +304,7 @@ class CustomerViewTest(TestCase):
         self.assertEqual(new_cust.contract, self.contract)
 
 
-    def test_admin_update(self):
+    def test_admin_create(self):
         """
         Тест проверки возможности создания активного клиента администратором.
         Возвращает код - 302 и перенаправляет на страницу списка клиентов.
@@ -382,7 +382,7 @@ class CustomerViewTest(TestCase):
         self.assertEqual(upd_cust.contract, self.contract)
 
 
-    def test_admin_updates(self):
+    def test_admin_update(self):
         """
         Тест проверки возможности обновления активного клиента администратором.
         Возвращает код - 302 и перенаправляет на страницу деталей клиентов.
