@@ -237,7 +237,7 @@ def test_update_contract(client, contract, product, lead):
 def test_update_by_user(auth_user, user, contract, product, lead):
     """
     Тест проверки возможности обновления контракта авторизованным пользователем.
-    Возвращает код 302, создает контракт и направляет на страницу списка контрактов
+    Возвращает код 302, обновляет контракт и направляет на страницу списка контрактов
     при наличии определенных прав.
     :param client: fixtures
     :param contract: fixtures
@@ -277,7 +277,7 @@ def test_update_by_user(auth_user, user, contract, product, lead):
 def test_update_by_admin(auth_admin, contract, product, lead):
     """
     Тест проверки возможности обновления контракта администратором.
-    Возвращает код 302, создает контракт и направляет на страницу списка контрактов.
+    Возвращает код 302, обновляет контракт и направляет на страницу списка контрактов.
     :param client: fixtures
     :param contract: fixtures
     :param product: fixtures
