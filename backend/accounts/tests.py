@@ -1,12 +1,6 @@
 from django.contrib.auth.models import User
-from django.test import TestCase
-import pytest, pytest_django
+import pytest
 from django.urls import reverse
-
-
-# @pytest.mark.django_db
-# def test_product_create(product):
-#     assert product.name == "TestProd"
 
 
 @pytest.mark.parametrize("field, value", [
@@ -17,6 +11,14 @@ from django.urls import reverse
 ])
 @pytest.mark.django_db
 def test_register(client, field, value):
+    """
+    Тест проверки регистрации пользователя при неправильных данных.
+    Пользователь не создается.
+    :param client: fiхtures
+    :param field:
+    :param value:
+    :return: 200
+    """
     url = reverse("accounts:registers")
     data = {
         'username': 'validuser',
@@ -35,6 +37,12 @@ def test_register(client, field, value):
 
 @pytest.mark.django_db
 def test_register_success(client):
+    """
+    Тест успешной регистрации пользователя. Возвращает код 302 (перенаправляет
+    на страницу об успешной регистрации)
+    :param client: fiхtures
+    :return: 302
+    """
     url = reverse('accounts:registers')
     data = {
         'username': 'newuser',
@@ -42,24 +50,36 @@ def test_register_success(client):
         'password2': 'verySecure123',
     }
     response = client.post(url, data)
-    # Должен быть редирект (обычно на страницу логина или главную)
     assert response.status_code == 302
-    # Проверяем, что пользователь создан
     assert User.objects.filter(username='newuser').exists()
+    assert "message" in response.url
 
 
 @pytest.mark.django_db
 def test_login(client, user):
+    """
+    Тест проверки входа пользователя. Возвращает код 302 и отправляет на главную страницу.
+    :param client: fiхtures
+    :param user: fiхtures
+    :return: 302
+    """
     url = reverse("accounts:login")
     data = {'username': 'TestUser', 'password': 'Test1999'}
 
     response = client.post(url, data)
     assert response.status_code == 302
     assert response.wsgi_request.user.is_authenticated
+    assert "/" in response.url
 
 
 @pytest.mark.django_db
 def test_invalid_password(client, user):
+    """
+    Тест проверки входа с ошибочными данными. Пользователь не входит.
+    :param client: fiхtures
+    :param user: fiхtures
+    :return: 200
+    """
     url = reverse("accounts:login")
     data = {'username': 'TestUser', 'password': 'Test'}
 
@@ -69,14 +89,34 @@ def test_invalid_password(client, user):
     assert response.context['form'].errors
     assert 'form' in response.context
 
-def test_logout(client, user):
-    url = reverse("accounts:login")
+def test_logout(client, user, auth_user):
+    """
+    Тест проверки выхода. Возвращает код 302 и направляет на страницу входа.
+    :param client: fiхtures
+    :param user: fiхtures
+    :return: 200
+    """
+    url = reverse("accounts:logout")
+
     response = client.get(url)
-    assert response.status_code == 200
+    assert response.status_code == 302
     assert not response.wsgi_request.user.is_authenticated
+    assert "login" in response.url
+
+    response = auth_user.get(url)
+    assert response.status_code == 302
+    assert not response.wsgi_request.user.is_authenticated
+    assert "login" in response.url
 
 
 def test_error_register(client, user):
+    """
+    Тест попытки повторной регистрации пользователя.
+    Пользователь не создан.
+    :param client: fiхtures
+    :param user: fiхtures
+    :return: 200
+    """
     url = reverse('accounts:registers')
     data = {
         'username': 'TestUser',
@@ -90,11 +130,23 @@ def test_error_register(client, user):
     assert 'username' in response.context['form'].errors
 
 def test_login_for_all(client):
+    """
+    Тест проверки возможности зайти на страницу входа любому пользователю.
+    :param client: fiхtures
+    :return: 200
+    """
     url = reverse("accounts:login")
     response = client.get(url)
     assert response.status_code == 200
 
 
-def test_home_page(client):
+def test_home_page(client, auth_user):
+    """
+    Тест проверки возможности входа на главную страницу.
+    :param client: fiхtures
+    :return: 302
+    """
     response = client.get("/")
-    assert response.status_code == 302
+    assert response.status_code == 200
+    response = auth_user.get("/")
+    assert response.status_code == 200
