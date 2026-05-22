@@ -53,3 +53,9 @@ def user_admin(db):
 def auth_user(client, user):
     client.login(username=user.username,  password="Test1999")
     return client
+
+
+@pytest.fixture
+def auth_admin(client, user_admin):
+    client.login(username=user_admin.username,  password="Passwort111")
+    return client
