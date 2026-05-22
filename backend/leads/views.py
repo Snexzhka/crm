@@ -23,6 +23,10 @@ from customers.models import Customer
 
 
 class LeadListView(PermissionRequiredMixin, ListView):
+    """
+    Представление для просмотра списка потенциальных клиентов. Для просмотра
+    необходимы права админа или разрешение на просмотр.
+    """
     permission_required =  "leads.view_lead"
     template_name = "leads/leads-list.html"
     model = Lead
@@ -30,12 +34,20 @@ class LeadListView(PermissionRequiredMixin, ListView):
     context_object_name = "leads"
 
 class LeadDetailView(PermissionRequiredMixin, DetailView):
+    """
+    Представление для просмотра деталей потенциальных клиентов. Для просмотра
+    необходимы права админа или разрешение на просмотр.
+    """
     permission_required = "leads.view_lead"
     template_name = "leads/leads-detail.html"
     queryset = Lead.objects.all()
     context_object_name = "object"
 
 class LeadsCreateView(PermissionRequiredMixin, CreateView):
+    """
+    Представление для создания потенциальных клиентов. Для сощдания
+    необходимы права админа или разрешение на создание.
+    """
     permission_required = "leads.add_lead"
     model = Lead
     success_url = reverse_lazy("leads:leads-list")
@@ -48,6 +60,10 @@ class LeadsCreateView(PermissionRequiredMixin, CreateView):
         return response
 
 class LeadUpdateView(PermissionRequiredMixin, UpdateView):
+    """
+    Представление для обновления потенциальных клиентов. Для обновления
+    необходимы права админа или разрешение на обновление
+    """
     permission_required = "leads.change_lead"
     model = Lead
     fields = "first_name", "last_name", "phone", "email", "advert_name"
@@ -57,6 +73,9 @@ class LeadUpdateView(PermissionRequiredMixin, UpdateView):
         return reverse("leads:leads-detail", kwargs={"pk": self.object.pk})
 
 class LeadDeleteView(UserPassesTestMixin, DeleteView):
+    """
+    Представление для удаления потенциальных клиентов. Для удаления необходимы права админа.
+    """
     def test_func(self):
         return self.request.user.is_superuser
 
@@ -67,6 +86,10 @@ class LeadDeleteView(UserPassesTestMixin, DeleteView):
 
 
 class ConvertLeadView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
+    """
+    Представление для перевода из списка потенциальных клиентов в список активных клиентов.
+    Необходимы права админа или разрешение.
+    """
     template_name = "leads/convert_lead.html"
     form_class = ConvertLeadForm
     success_url = reverse_lazy("customers:customers-list")

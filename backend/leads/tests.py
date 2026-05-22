@@ -84,10 +84,9 @@ class LeadsViewTest(TestCase):
     @classmethod
     def tearDownClass(cls):
         """
-        Класс для удаления медиа файлов после прогона всех тестов. Запускается в конце, после
+        Метод для удаления медиа файлов после прогона всех тестов. Запускается в конце, после
         отработки всех тестов.
         """
-        # Проверяем, существует ли переопределённая настройка
         if hasattr(cls, '_overridden_settings') and cls._overridden_settings:
             media_root = cls._overridden_settings.get('MEDIA_ROOT')
             if media_root and os.path.exists(media_root):
@@ -288,7 +287,7 @@ class LeadsViewTest(TestCase):
     def test_operator_update(self):
         """
          Тест, проверяющий возможность обновления лида оператором. Сразу возвращает код 403, после
-        предоставления прав - 302 и перенаправляет на список лидов.
+        предоставления прав - 302 и перенаправляет на детали лида.
         """
         self.login_operator()
         ads_ct = ContentType.objects.get_for_model(Advert)
@@ -314,7 +313,7 @@ class LeadsViewTest(TestCase):
 
         response = self.client.post(reverse("leads:leads-update", kwargs={"pk": self.lead.pk}),
                                     data=data)
-        self.product.refresh_from_db()
+        self.lead.refresh_from_db()
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("leads:leads-detail", kwargs={"pk": self.lead.pk}))
         update_lead = Lead.objects.get(last_name="LastName")
@@ -325,7 +324,7 @@ class LeadsViewTest(TestCase):
     def test_admin_update(self):
         """
         Тест, проверяющий возможность обновления лида админом. Возвращает код 302 и
-        перенаправляет на список лидов.
+        перенаправляет на детали лида.
         """
         self.login_admin()
         data = {
