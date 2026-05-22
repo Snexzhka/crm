@@ -17,6 +17,9 @@ from tasks.models import Task
 
 @login_required
 def home_page(request: HttpRequest):
+    """
+    Функция для отражения главной страницы
+    """
     context = {
         "products_count": Product.objects.count(),
         "ads_count": Advert.objects.count(),
@@ -28,15 +31,24 @@ def home_page(request: HttpRequest):
 
 
 class LogoutPage(View):
+    """
+    Представление для выхода из аккаунта
+    """
     def get(self, request: HttpRequest):
         logout(request)
         return redirect('accounts:login')
 
 class Messages(TemplateView):
+    """
+    Представление для вывода сообщения об успешной регистрации
+    """
     template_name = "accounts/messages.html"
 
 
 class RegisterView(CreateView):
+    """
+    Представление для регистрации пользователей
+    """
     form_class = UserCreationForm
     template_name = 'accounts/register.html'
     success_url = reverse_lazy('accounts:message')
