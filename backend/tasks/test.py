@@ -9,6 +9,10 @@ from .models import Task
 
 @pytest.mark.django_db
 def test_task_model(task):
+    """
+    Тест проверки создания объектов моделей задач
+    :param task: fixture
+    """
     assert task.title == "TestTask"
     assert task.user.username == "TestUser"
     assert task.is_completed == False
@@ -17,6 +21,12 @@ def test_task_model(task):
 
 @pytest.mark.django_db
 def test_view_task(client):
+    """
+    Тест проверки невозможности просмотра списка задач неавторизованным пользователем.
+    Возвращает код 302 и направляет на страницу входа.
+    :param client: fixture
+    :return: 302
+    """
     url = reverse("tasks:tasks-list")
     response = client.get(url)
     assert response.status_code == 302
@@ -25,6 +35,12 @@ def test_view_task(client):
 
 @pytest.mark.django_db
 def test_view_by_user(user, auth_user):
+    """
+    Тест проверки возможности просмотра списка задач авторизованным пользователем.
+    Возвращает код 200. Согласно представлению дополнительные разрешения не нужны.
+    :param client: fixture
+    :return: 200
+    """
     url = reverse("tasks:tasks-list")
     response = auth_user.get(url)
     assert response.status_code == 200
@@ -33,6 +49,12 @@ def test_view_by_user(user, auth_user):
 
 @pytest.mark.django_db
 def test_view_by_admin(auth_admin):
+    """
+    Тест проверки возможности просмотра списка задач администратором.
+    Возвращает код 200.
+    :param client: fixture
+    :return: 200
+    """
     url = reverse("tasks:tasks-list")
     response = auth_admin.get(url)
     assert response.status_code == 200
@@ -41,6 +63,12 @@ def test_view_by_admin(auth_admin):
 
 @pytest.mark.django_db
 def test_view_detail_task(client, task):
+    """
+    Тест проверки невозможности просмотра деталей задач неавторизованным пользователем.
+    Возвращает код 302 и направляет на страницу входа.
+    :param client: fixture
+    :return: 302
+    """
     url = reverse("tasks:tasks-detail", kwargs={"pk":task.pk})
     response = client.get(url)
     assert response.status_code == 302
@@ -48,7 +76,13 @@ def test_view_detail_task(client, task):
 
 
 @pytest.mark.django_db
-def test_view_detail_tby_user(auth_user, task):
+def test_view_detail_by_user(auth_user, task):
+    """
+    Тест проверки возможности просмотра деталей задач авторизованным пользователем.
+    Возвращает код 200. Согласно представлению дополнительные разрешения не нужны.
+    :param client: fixture
+    :return: 200
+    """
     url = reverse("tasks:tasks-detail", kwargs={"pk":task.pk})
     response = auth_user.get(url)
     assert response.status_code == 200
@@ -57,7 +91,13 @@ def test_view_detail_tby_user(auth_user, task):
 
 
 @pytest.mark.django_db
-def test_view_detail_tby_admin(auth_admin, task):
+def test_view_detail_by_admin(auth_admin, task):
+    """
+    Тест проверки возможности просмотра деталей задач администратором.
+    Возвращает код 200.
+    :param client: fixture
+    :return: 200
+    """
     url = reverse("tasks:tasks-detail", kwargs={"pk":task.pk})
     response = auth_admin.get(url)
     assert response.status_code == 200
@@ -67,6 +107,14 @@ def test_view_detail_tby_admin(auth_admin, task):
 
 @pytest.mark.django_db
 def test_create_task(client, task, user):
+    """
+    Тест проверки невозможности создания новой задачи неавторизованным пользователем.
+    Возвращает код 403.
+    :param client: fixture
+    :param task: fixture
+    :param user: fixture
+    :return: 403
+    """
     data = {
         "user":user,
         "title":"NewTask",
@@ -80,6 +128,14 @@ def test_create_task(client, task, user):
 
 @pytest.mark.django_db
 def test_create_by_user(auth_user, user, task):
+    """
+    Тест проверки возможности создания новой задачи авторизованным пользователем.
+    Создает задачу и возвращает код 302 при наличии определенных прав.
+    :param client: fixture
+    :param task: fixture
+    :param user: fixture
+    :return: 302
+    """
     data = {
         "user": user.pk,
         "title": "NewTask",
@@ -103,6 +159,14 @@ def test_create_by_user(auth_user, user, task):
 
 @pytest.mark.django_db
 def test_create_by_admin(auth_admin, user_admin, task):
+    """
+    Тест проверки возможности создания новой задачи администратором.
+    Создает задачу и возвращает код 302.
+    :param client: fixture
+    :param task: fixture
+    :param user: fixture
+    :return: 302
+    """
     data = {
         "user": user_admin.pk,
         "title": "NewTask",
@@ -119,6 +183,14 @@ def test_create_by_admin(auth_admin, user_admin, task):
 
 @pytest.mark.django_db
 def test_update_task(client, task, user):
+    """
+    Тест проверки невозможности обновления задачи неавторизованным пользователем.
+    Возвращает код 302 и направляет на страницу входа.
+    :param client: fixture
+    :param task: fixture
+    :param user: fixture
+    :return: 302
+    """
     data = {
         "user":user,
         "title":"UpdateTask",
@@ -133,6 +205,14 @@ def test_update_task(client, task, user):
 
 @pytest.mark.django_db
 def test_update_by_user(auth_user, task, user):
+    """
+    Тест проверки возможности обновления задачи авторизованным пользователем.
+    Обновляет поля задачи и возвращает код 302.
+    :param client: fixture
+    :param task: fixture
+    :param user: fixture
+    :return: 302
+    """
     data = {
         "user":user,
         "title":"UpdateTask",
@@ -148,6 +228,14 @@ def test_update_by_user(auth_user, task, user):
 
 @pytest.mark.django_db
 def test_update_by_admin(auth_admin, task, user):
+    """
+    Тест проверки возможности обновления задачи администратором.
+    Обновляет задачу и возвращает код 302.
+    :param client: fixture
+    :param task: fixture
+    :param user: fixture
+    :return: 302
+    """
     data = {
         "user":user,
         "title":"UpdateTask",
@@ -163,6 +251,14 @@ def test_update_by_admin(auth_admin, task, user):
 
 @pytest.mark.django_db
 def test_delete_task(client, task):
+    """
+    Тест проверки невозможности удаления задачи неавторизованным пользователем.
+    Возвращает код 302 и направляет на страницу входа.
+    :param client: fixture
+    :param task: fixture
+    :param user: fixture
+    :return: 302
+    """
     url = reverse("tasks:tasks-delete", kwargs={"pk":task.pk})
     response = client.post(url)
     assert response.status_code == 302
@@ -171,6 +267,14 @@ def test_delete_task(client, task):
 
 @pytest.mark.django_db
 def test_delete_by_user(auth_user, task):
+    """
+    Тест проверки возможности удаления задачи авторизованным пользователем.
+    Удаляет задачу и возвращает код 302.
+    :param client: fixture
+    :param task: fixture
+    :param user: fixture
+    :return: 302
+    """
     url = reverse("tasks:tasks-delete", kwargs={"pk":task.pk})
     response = auth_user.post(url)
     assert response.status_code == 302
@@ -180,6 +284,14 @@ def test_delete_by_user(auth_user, task):
 
 @pytest.mark.django_db
 def test_delete_by_admin(auth_admin, task):
+    """
+    Тест проверки возможности удаления задачи администратором.
+    Удаляет задачу и возвращает код 302.
+    :param client: fixture
+    :param task: fixture
+    :param user: fixture
+    :return: 302
+    """
     url = reverse("tasks:tasks-delete", kwargs={"pk":task.pk})
     response = auth_admin.post(url)
     assert response.status_code == 302
