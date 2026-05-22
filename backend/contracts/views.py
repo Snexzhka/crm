@@ -15,6 +15,10 @@ from .models import Contract
 from .forms import ContractForm
 
 class ContractListView(PermissionRequiredMixin, ListView):
+    """
+    Представление для просмотра списка контактов. Для просмотра необходимо разрешение на просмотр
+    или права админа
+    """
     permission_required = "contracts.view_contract"
     template_name = "contracts/contracts-list.html"
     model = Contract
@@ -23,6 +27,10 @@ class ContractListView(PermissionRequiredMixin, ListView):
 
 
 class ContractsDetailView(PermissionRequiredMixin, DetailView):
+    """
+    Представление для просмотра деталей контактов. Для просмотра необходимо разрешение на просмотр
+    или права админа
+    """
     permission_required =  "contracts.view_contract"
     template_name = "contracts/contracts-detail.html"
     queryset = Contract.objects.all()
@@ -30,6 +38,10 @@ class ContractsDetailView(PermissionRequiredMixin, DetailView):
 
 
 class ContractsCreateView(PermissionRequiredMixin, CreateView):
+    """
+    Представление для создания контактов. Для создания необходимо разрешение на создание
+    или права админа
+    """
     permission_required =  "contracts.add_contract"
     model = Contract
     success_url = reverse_lazy("contracts:contracts-list")
@@ -43,6 +55,10 @@ class ContractsCreateView(PermissionRequiredMixin, CreateView):
         return response
 
 class ContractUpdateView(PermissionRequiredMixin, UpdateView):
+    """
+    Представление для обновления контактов. Для обновления необходимо разрешение на обновление
+    или права админа
+    """
     permission_required =  "contracts.change_contract"
     model = Contract
     fields = "name", "products",  "duration", "file", "cost", "lead"
@@ -53,6 +69,9 @@ class ContractUpdateView(PermissionRequiredMixin, UpdateView):
 
 
 class ContractDeleteView(UserPassesTestMixin, DeleteView):
+    """
+    Представление для удаления контактов. Для удаления необходимы права админа
+    """
     def test_func(self):
         return self.request.user.is_superuser
 

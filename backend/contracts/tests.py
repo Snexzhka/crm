@@ -2,15 +2,12 @@ import datetime
 import os
 import shutil
 from datetime import timedelta
-from io import BytesIO
 
 from django.contrib.contenttypes.models import ContentType
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, Client
 from django.contrib.auth.models import User, Permission
 from django.urls import reverse
 from django.conf import settings
-from django.utils import timezone
 
 from .models import Contract
 from ads.models import Advert
@@ -107,7 +104,7 @@ class ContractTestView(TestCase):
     @classmethod
     def tearDownClass(cls):
         """
-        Класс для удаления медиа файлов после прогона всех тестов. Запускается в конце, после
+        Метод для удаления медиа файлов после прогона всех тестов. Запускается в конце, после
         отработки всех тестов.
         """
         # Проверяем, существует ли переопределённая настройка
@@ -242,6 +239,7 @@ class ContractTestView(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn(str(settings.LOGIN_URL), response.url)
 
+
     def test_create_manager(self):
         """
         Тест проверки создания контракта авторизованным пользователем. Без наличия необходимых
@@ -272,9 +270,6 @@ class ContractTestView(TestCase):
         self.manager.user_permissions.add(view_perm, add_perm)
 
         response = self.client.post(reverse("contracts:contracts_create"), data=data)
-        # if response.status_code == 200:
-        #     print(response.context['form'].errors)
-        #     self.fail("Форма не прошла валидацию")
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("contracts:contracts-list"))
         self.assertTrue(Contract.objects.filter(name="TestCont").exists())
@@ -298,9 +293,8 @@ class ContractTestView(TestCase):
         }
         self.product.is_active = True
         self.product.save()
+
         response = self.client.post(reverse("contracts:contracts_create"), data=data)
-        if response.status_code == 200:
-            print(response.context['form'].errors)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("contracts:contracts-list"))
         self.assertTrue(Contract.objects.filter(name="TestCont").exists())
@@ -423,6 +417,6 @@ class ContractTestView(TestCase):
         """
         self.login_admin()
         response = self.client.post(reverse("contracts:contract-delete", kwargs={"pk": self.contract.pk}))
-        # self.assertEqual(response.status_code, 302)
-        # self.assertRedirects(response, reverse("contracts:contracts-list"))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("contracts:contracts-list"))
         self.assertFalse(Contract.objects.filter( name="TestContract").exists())
