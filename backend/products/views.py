@@ -17,6 +17,10 @@ from .models import Product
 from .forms import ProductForm
 
 class ProductListView(PermissionRequiredMixin, ListView):
+    """
+    Представление для получения списка услуг. Требуется разрешение на просмотр
+    или права админа.
+    """
     permission_required = "products.view_product"
     template_name = "products/products-list.html"
     #model = Product
@@ -24,6 +28,10 @@ class ProductListView(PermissionRequiredMixin, ListView):
     context_object_name = "products"
 
 class ProductDetailView(PermissionRequiredMixin, DetailView):
+    """
+    Представление для просмотра деталей услуги. Требуется разрешение на просмотр
+    или права админа.
+    """
     permission_required = "products.view_product"
     template_name = "products/products-detail.html"
     queryset = Product.objects.all()
@@ -31,6 +39,10 @@ class ProductDetailView(PermissionRequiredMixin, DetailView):
 
 
 class ProductCreateView(PermissionRequiredMixin, CreateView):
+    """
+    Представление для создания услуги. Требуется разрешение на создание
+    или права админа.
+    """
     permission_required = "products.add_product"
     model = Product
     success_url = reverse_lazy("products:product-list")
@@ -45,6 +57,10 @@ class ProductCreateView(PermissionRequiredMixin, CreateView):
 
 
 class ProductUpdateView(PermissionRequiredMixin, UpdateView):
+    """
+    Представление для обновления услуги. Требуется разрешение на обновление
+    или права админа.
+    """
     permission_required = "products.change_product"
     model = Product
     fields = "name", "description", "cost"
@@ -54,6 +70,9 @@ class ProductUpdateView(PermissionRequiredMixin, UpdateView):
         return reverse("products:product-detail", kwargs={"pk": self.object.pk})
 
 class ProductDeleteView(UserPassesTestMixin, DeleteView):
+    """
+    Представление для удаления услуги. Требуются права админа.
+    """
     def test_func(self):
         return self.request.user.is_superuser
 

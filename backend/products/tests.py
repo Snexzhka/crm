@@ -6,12 +6,14 @@ from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase, Client
 from django.contrib.auth.models import User, Permission
 from django.urls import reverse
-from django.utils import timezone
 
 from .models import Product
 
 
 class ProductModelTest(TestCase):
+    """
+    Класс для тестов создания объектов  услуг
+    """
     def test_create_product(self):
         """
         Тест, проверки создания объектов услуг
@@ -36,7 +38,7 @@ class ProductTestView(TestCase):
     @classmethod
     def setUpClass(cls):
         """
-        Метод установки значеений перед прогоном всех тестов, отрабатывает один раз перед
+        Метод установки значений перед прогоном всех тестов, отрабатывает один раз перед
         началом всех тестов.
         """
         super().setUpClass()
@@ -53,7 +55,7 @@ class ProductTestView(TestCase):
     @classmethod
     def tearDownClass(cls):
         """
-        Класс для удаления медиа файлов после прогона всех тестов. Запускается в конце, после
+        Метод для удаления медиа файлов после прогона всех тестов. Запускается в конце, после
         отработки всех тестов.
         """
         # Проверяем, существует ли переопределённая настройка
@@ -282,7 +284,7 @@ class ProductTestView(TestCase):
 
     def test_update_admin(self):
         """
-        Тест возможности админом создать услугу возвращает код  302 и перенаправляет на страницу
+        Тест возможности админом создать услугу возвращает код 302 и перенаправляет на страницу
         услуги.
         """
         self.login_admin()
@@ -302,7 +304,7 @@ class ProductTestView(TestCase):
     def test_delete_prod(self):
         """
         Тест проверки невозможности неавторизованным пользователем удалить услугу.
-        Возвращает код 302 и перенаправляет на страницу входа.
+        Возвращает код 403.
         """
         self.client.logout()
         response = self.client.post(reverse("products:product-delete", kwargs={"pk":self.product.pk}))
@@ -330,7 +332,7 @@ class ProductTestView(TestCase):
     def test_delete_admin(self):
         """
         Тест проверки возможности удаления услуги админом.
-        Возвращает код 302 и перенаправляет на список услуг.,
+        Возвращает код 302 и перенаправляет на список услуг.
         """
         self.login_admin()
         response = self.client.post(reverse("products:product-delete", kwargs={"pk": self.product.pk}))
