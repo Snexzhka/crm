@@ -24,6 +24,9 @@ from .forms import TaskForm
 
 
 class TaskListView(LoginRequiredMixin, ListView):
+    """
+    Представление для просмотра списка текущих задач. Для просмотра необходима авторизация.
+    """
     template_name = "tasks/tasks-list.html"
     model = Task
     #queryset = Task.objects.select_related("user").filter(is_completed=False)
@@ -46,7 +49,9 @@ class TaskListView(LoginRequiredMixin, ListView):
 
 
 class TaskDetailView(LoginRequiredMixin, DetailView):
-
+    """
+    Представление для просмотра деталей текущих задач. Для просмотра необходима авторизация.
+    """
     template_name = "tasks/tasks-detail.html"
     queryset = Task.objects.all()
     context_object_name = "object"
@@ -59,6 +64,10 @@ class TaskDetailView(LoginRequiredMixin, DetailView):
 
 
 class TaskCreateView(PermissionRequiredMixin, CreateView):
+    """
+    Представление для создания текущих задач. Необходимы разрешения
+    или права админа.
+    """
     permission_required = "tasks.add_task"
     raise_exception = True
     model = Task
@@ -77,6 +86,10 @@ class TaskCreateView(PermissionRequiredMixin, CreateView):
 
 
 class TaskUpdateView(UserPassesTestMixin, UpdateView):
+    """
+    Представление для обновления текущих задач. Необходимы разрешения
+    или права админа.
+    """
     def test_func(self):
         obj = self.get_object()
         return self.request.user.is_superuser or obj.user == self.request.user
@@ -90,6 +103,10 @@ class TaskUpdateView(UserPassesTestMixin, UpdateView):
 
 
 class TaskDeleteView(UserPassesTestMixin, DeleteView):
+    """
+    Представление для удаления текущих задач. Необходимы авторизация (быть автором
+    задачи) или права админа.
+    """
     def test_func(self):
         obj = self.get_object()
         return self.request.user.is_superuser or obj.user == self.request.user
@@ -99,6 +116,9 @@ class TaskDeleteView(UserPassesTestMixin, DeleteView):
 
 
 class RescheduleTasksView(LoginRequiredMixin, View):
+    """
+    Представление для отметки выполнения задач.
+    """
     def post(self, request):
         today = timezone.now().date()
         # Находим невыполненные задачи пользователя с due_date <= сегодня
@@ -118,4 +138,3 @@ class RescheduleTasksView(LoginRequiredMixin, View):
                 task.save()
             messages.success(request, f'Перенесено {count} невыполненных задач на завтра.')
         return redirect('tasks:tasks-list')
-
