@@ -10,6 +10,7 @@ from leads.models import Lead
 from ads.models import Advert
 from tasks.models import Task
 from contracts.models import Contract
+from customers.models import Customer
 
 
 @pytest.fixture
@@ -66,6 +67,13 @@ def contract(db, product, lead):
         products=product,
         lead=lead,
         duration=datetime.timedelta(days=5),
+    )
+
+@pytest.fixture
+def customer(db, lead, contract):
+    return Customer.objects.create(
+        lead=lead,
+        contract=contract,
     )
 
 @pytest.fixture
