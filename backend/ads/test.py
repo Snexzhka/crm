@@ -19,8 +19,8 @@ def test_view_ads(user, auth_user, ads):
     assert response.status_code == 403
 
     content_type = ContentType.objects.get_for_model(Advert)
-    view_permission = Permission.objects.get(content_type=content_type, codename='view_advert')
-    user.user_permissions.add(view_permission)
+    permission = Permission.objects.get(content_type=content_type, codename='view_advert')
+    user.user_permissions.add(permission)
 
     response = auth_user.get(url)
     assert response.status_code == 200
@@ -115,7 +115,7 @@ def test_create_user(ads, auth_user, product, user):
 
 
 @pytest.mark.django_db
-def test_create_by_admin(auth_admin, admin_user, product, ads):
+def test_create_by_admin(auth_admin, product, ads):
     data = {
         "name": "Advert_new",
         "budget": 22,
@@ -169,7 +169,7 @@ def test_update_by_user(auth_user, user, product, ads):
 
 
 @pytest.mark.django_db
-def test_update_by_admin(admin_user, auth_admin, product, ads):
+def test_update_by_admin(auth_admin, product, ads):
     data = {
         "name": "Advert_update",
         "budget": 122,
@@ -208,7 +208,7 @@ def test_delete_by_user(auth_user, user, product, ads):
 
 
 @pytest.mark.django_db
-def test_delete_admin(admin_user, auth_admin, product, ads):
+def test_delete_admin(auth_admin, product, ads):
     url = reverse("ads:ads_delete", kwargs={"pk":ads.pk})
     response = auth_admin.post(url)
     assert response.status_code == 302
