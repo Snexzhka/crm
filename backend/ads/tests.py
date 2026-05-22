@@ -67,7 +67,7 @@ class AdvertTestView(TestCase):
     @classmethod
     def tearDownClass(cls):
         """
-        Класс для удаления медиа файлов после прогона всех тестов. Запускается в конце, после
+        Метод для удаления медиа файлов после прогона всех тестов. Запускается в конце, после
         отработки всех тестов.
         """
         if hasattr(cls, '_overridden_settings') and cls._overridden_settings:
@@ -79,7 +79,7 @@ class AdvertTestView(TestCase):
 
     def setUp(self):
         """
-        Класс установки данных для тестов, данные устанавливаются заново перед каждым тестом
+        Метод установки данных для тестов, данные устанавливаются заново перед каждым тестом
         """
         self.ads = Advert.objects.create(
             name="testAdvert",
