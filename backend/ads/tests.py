@@ -6,7 +6,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase, Client
 from django.contrib.auth.models import User, Permission
 from django.urls import reverse
-from django.utils import timezone
 
 from .models import Advert
 from products.models import Product
@@ -71,7 +70,6 @@ class AdvertTestView(TestCase):
         Класс для удаления медиа файлов после прогона всех тестов. Запускается в конце, после
         отработки всех тестов.
         """
-        # Проверяем, существует ли переопределённая настройка
         if hasattr(cls, '_overridden_settings') and cls._overridden_settings:
             media_root = cls._overridden_settings.get('MEDIA_ROOT')
             if media_root and os.path.exists(media_root):

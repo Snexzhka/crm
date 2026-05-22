@@ -11,10 +11,6 @@ from django.db.models import (
 )
 from django.db.models.functions import Coalesce
 from django.urls import reverse_lazy, reverse
-from django.views import View
-from rest_framework.request import Request
-from django.shortcuts import render
-from rest_framework.views import APIView
 from django.contrib.auth.mixins import (
     PermissionRequiredMixin,
     UserPassesTestMixin,
@@ -32,6 +28,10 @@ from .forms import AdvertForm
 
 
 class AdventView(PermissionRequiredMixin, ListView):
+    """
+    Представление для получения списка рекламных компаний. Для просмотра необходимо либо наличие
+    прав на просмотр, либо права админа.
+    """
     permission_required = "ads.view_advert"
     template_name = "ads/ads-list.html"
     model = Advert
@@ -40,6 +40,10 @@ class AdventView(PermissionRequiredMixin, ListView):
 
 
 class AdventDetail(PermissionRequiredMixin, DetailView):
+    """
+    Представление для получения деталей рекламных компаний. Для просмотра необходимо либо наличие
+    прав на просмотр, либо права админа
+    """
     permission_required = "ads.view_advert"
     template_name = "ads/ads-detail.html"
     queryset = Advert.objects.select_related("products")
@@ -47,6 +51,10 @@ class AdventDetail(PermissionRequiredMixin, DetailView):
 
 
 class AdventCreateView(PermissionRequiredMixin, CreateView):
+    """
+    Представление для создания рекламных компаний. Для создания необходимо либо наличие
+    прав на создание, либо права админа
+    """
     permission_required = "ads.add_advert"
     model = Advert
     success_url = reverse_lazy("ads:ads-list")
@@ -60,6 +68,10 @@ class AdventCreateView(PermissionRequiredMixin, CreateView):
 
 
 class AdventDeleteView(UserPassesTestMixin, DeleteView):
+    """
+    Представление для удаления рекламных компаний. Для удаления необходимо наличие
+    прав админа
+    """
     def test_func(self):
         return self.request.user.is_superuser
 
@@ -70,6 +82,10 @@ class AdventDeleteView(UserPassesTestMixin, DeleteView):
 
 
 class AdvertUpdateView(PermissionRequiredMixin, UpdateView):
+    """
+    Представление для обновления рекламных компаний. Для обновления необходимо либо наличие
+    прав на обновление, либо права админа
+    """
     permission_required = "ads.change_advert"
     model = Advert
     fields = "name", "promotion_path", "budget", "products"
@@ -80,6 +96,9 @@ class AdvertUpdateView(PermissionRequiredMixin, UpdateView):
 
 
 class AdStatisticsView(ListView):
+    """
+    Представление для вывода статистики
+    """
     model = Advert
     template_name = 'ads/ads-statistic.html'
     context_object_name = 'ads'
