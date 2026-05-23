@@ -1,6 +1,7 @@
 """
 Подключение приложения "tasks"
 """
+
 from django.urls import path
 
 from .views import (
@@ -21,5 +22,4 @@ urlpatterns = [
     path("new/", TaskCreateView.as_view(), name="tasks-create"),
     path("<int:pk>/edit/", TaskUpdateView.as_view(), name="tasks-update"),
     path("<int:pk>/delete/", TaskDeleteView.as_view(), name="tasks-delete"),
-
-    ]
+]

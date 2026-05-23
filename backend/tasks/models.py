@@ -1,9 +1,11 @@
 """
 Модель для приложения текущих задач
 """
+
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+
 
 class Task(models.Model):
     """
@@ -18,13 +20,12 @@ class Task(models.Model):
         is_completed:отметка о выполнении
         created_at: исполнить до (срок исполнения)
     """
+
     class Meta:
         ordering = ["title", "due_date", "-created_at"]
 
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="tasks"
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="tasks"
     )
     title: models.CharField = models.CharField(max_length=250)
     description: models.TextField = models.TextField(null=True, blank=True)
