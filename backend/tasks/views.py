@@ -2,10 +2,9 @@
 Представление для создания, удаления и обновления текущих задач,
 просмотра списка и деталей задач.
 """
-from time import timezone
+from datetime import timedelta
 
 from django.core.exceptions import PermissionDenied
-from datetime import timedelta
 from django.shortcuts import  redirect
 from django.urls import reverse_lazy, reverse
 from django.utils import timezone
@@ -61,7 +60,7 @@ class TaskDetailView(LoginRequiredMixin, DetailView):
     queryset = Task.objects.all()
     context_object_name = "object"
 
-    def get_object(self):
+    def get_object(self, queryset=None):
         obj = super().get_object()
         if not (self.request.user.is_superuser or obj.user == self.request.user):
             raise PermissionDenied("У вас нет доступа к этой задаче.")
@@ -138,8 +137,7 @@ class RescheduleTasksView(LoginRequiredMixin, View):
             if task.due_date < today:
                 messages.error(request, "Нет задач для переноса")
                 return redirect('home')
-            else:
-                task.due_date += timedelta(days=1)
-                task.save()
-            messages.success(request, f'Перенесено {count} невыполненных задач на завтра.')
+            task.due_date += timedelta(days=1)
+            task.save()
+        messages.success(request, f'Перенесено {count} невыполненных задач на завтра.')
         return redirect('tasks:tasks-list')
