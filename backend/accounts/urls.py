@@ -5,11 +5,10 @@
 from django.contrib.auth.views import LoginView
 from django.urls import path
 
-
 from .views import (
     LogoutPage,
-    RegisterView,
     Messages,
+    RegisterView,
 )
 
 app_name = "accounts"
