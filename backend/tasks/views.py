@@ -1,10 +1,15 @@
+"""
+Представление для создания, удаления и обновления текущих задач,
+просмотра списка и деталей задач.
+"""
 from time import timezone
 
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, redirect
+from datetime import timedelta
+from django.shortcuts import  redirect
 from django.urls import reverse_lazy, reverse
 from django.utils import timezone
-from datetime import timedelta
+
 from django.contrib import messages
 from django.views import View
 from django.views.generic import (
@@ -19,8 +24,8 @@ from django.contrib.auth.mixins import (
     PermissionRequiredMixin,
     UserPassesTestMixin,
 )
-from .models import Task
 from .forms import TaskForm
+from .models import Task
 
 
 class TaskListView(LoginRequiredMixin, ListView):
@@ -131,7 +136,7 @@ class RescheduleTasksView(LoginRequiredMixin, View):
         # Переносим каждую задачу на один день вперёд
         for task in tasks_to_reschedule:
             if task.due_date < today:
-                messages.error(request, f"Нет задач для переноса")
+                messages.error(request, "Нет задач для переноса")
                 return redirect('home')
             else:
                 task.due_date += timedelta(days=1)

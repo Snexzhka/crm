@@ -1,5 +1,6 @@
-import datetime
-
+"""
+Тестирование на основе pytest
+"""
 import pytest
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
@@ -8,14 +9,14 @@ from django.urls import reverse
 from .models import Task
 
 @pytest.mark.django_db
-def test_task_model(task):
+def test_task_model(task, user):
     """
     Тест проверки создания объектов моделей задач
     :param task: fixture
     """
     assert task.title == "TestTask"
     assert task.user.username == "TestUser"
-    assert task.is_completed == False
+    assert task.is_completed is False
     assert task.description == "Desc"
 
 
@@ -34,11 +35,11 @@ def test_view_task(client):
 
 
 @pytest.mark.django_db
-def test_view_by_user(user, auth_user):
+def test_view_by_user(auth_user):
     """
     Тест проверки возможности просмотра списка задач авторизованным пользователем.
     Возвращает код 200. Согласно представлению дополнительные разрешения не нужны.
-    :param client: fixture
+    :param auth_user: fixture
     :return: 200
     """
     url = reverse("tasks:tasks-list")
@@ -52,7 +53,7 @@ def test_view_by_admin(auth_admin):
     """
     Тест проверки возможности просмотра списка задач администратором.
     Возвращает код 200.
-    :param client: fixture
+    :param auth_admin: fixture
     :return: 200
     """
     url = reverse("tasks:tasks-list")
@@ -67,6 +68,7 @@ def test_view_detail_task(client, task):
     Тест проверки невозможности просмотра деталей задач неавторизованным пользователем.
     Возвращает код 302 и направляет на страницу входа.
     :param client: fixture
+    :param task: fixture
     :return: 302
     """
     url = reverse("tasks:tasks-detail", kwargs={"pk":task.pk})
@@ -80,7 +82,8 @@ def test_view_detail_by_user(auth_user, task):
     """
     Тест проверки возможности просмотра деталей задач авторизованным пользователем.
     Возвращает код 200. Согласно представлению дополнительные разрешения не нужны.
-    :param client: fixture
+    :param auth_user: fixture
+    :param task: fixture
     :return: 200
     """
     url = reverse("tasks:tasks-detail", kwargs={"pk":task.pk})
@@ -95,7 +98,8 @@ def test_view_detail_by_admin(auth_admin, task):
     """
     Тест проверки возможности просмотра деталей задач администратором.
     Возвращает код 200.
-    :param client: fixture
+    :param auth_admin: fixture
+    :param task: fixture
     :return: 200
     """
     url = reverse("tasks:tasks-detail", kwargs={"pk":task.pk})
@@ -106,12 +110,11 @@ def test_view_detail_by_admin(auth_admin, task):
 
 
 @pytest.mark.django_db
-def test_create_task(client, task, user):
+def test_create_task(client, user):
     """
     Тест проверки невозможности создания новой задачи неавторизованным пользователем.
     Возвращает код 403.
     :param client: fixture
-    :param task: fixture
     :param user: fixture
     :return: 403
     """
@@ -127,12 +130,11 @@ def test_create_task(client, task, user):
 
 
 @pytest.mark.django_db
-def test_create_by_user(auth_user, user, task):
+def test_create_by_user(auth_user, user):
     """
     Тест проверки возможности создания новой задачи авторизованным пользователем.
     Создает задачу и возвращает код 302 при наличии определенных прав.
-    :param client: fixture
-    :param task: fixture
+    :param auth_user: fixture
     :param user: fixture
     :return: 302
     """
@@ -158,13 +160,12 @@ def test_create_by_user(auth_user, user, task):
 
 
 @pytest.mark.django_db
-def test_create_by_admin(auth_admin, user_admin, task):
+def test_create_by_admin(auth_admin, user_admin):
     """
     Тест проверки возможности создания новой задачи администратором.
     Создает задачу и возвращает код 302.
-    :param client: fixture
-    :param task: fixture
-    :param user: fixture
+    :param auth_admin: fixture
+    :param user_admin: fixture
     :return: 302
     """
     data = {
@@ -208,7 +209,7 @@ def test_update_by_user(auth_user, task, user):
     """
     Тест проверки возможности обновления задачи авторизованным пользователем.
     Обновляет поля задачи и возвращает код 302.
-    :param client: fixture
+    :param auth_user: fixture
     :param task: fixture
     :param user: fixture
     :return: 302
@@ -231,7 +232,7 @@ def test_update_by_admin(auth_admin, task, user):
     """
     Тест проверки возможности обновления задачи администратором.
     Обновляет задачу и возвращает код 302.
-    :param client: fixture
+    :param auth_admin: fixture
     :param task: fixture
     :param user: fixture
     :return: 302
@@ -256,7 +257,6 @@ def test_delete_task(client, task):
     Возвращает код 302 и направляет на страницу входа.
     :param client: fixture
     :param task: fixture
-    :param user: fixture
     :return: 302
     """
     url = reverse("tasks:tasks-delete", kwargs={"pk":task.pk})
@@ -270,9 +270,8 @@ def test_delete_by_user(auth_user, task):
     """
     Тест проверки возможности удаления задачи авторизованным пользователем.
     Удаляет задачу и возвращает код 302.
-    :param client: fixture
+    :param auth_user: fixture
     :param task: fixture
-    :param user: fixture
     :return: 302
     """
     url = reverse("tasks:tasks-delete", kwargs={"pk":task.pk})
@@ -287,9 +286,8 @@ def test_delete_by_admin(auth_admin, task):
     """
     Тест проверки возможности удаления задачи администратором.
     Удаляет задачу и возвращает код 302.
-    :param client: fixture
+    :param auth_admin: fixture
     :param task: fixture
-    :param user: fixture
     :return: 302
     """
     url = reverse("tasks:tasks-delete", kwargs={"pk":task.pk})
