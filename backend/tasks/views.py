@@ -135,8 +135,9 @@ class RescheduleTasksView(LoginRequiredMixin, View):
         # Переносим каждую задачу на один день вперёд
         for task in tasks_to_reschedule:
             if task.due_date < today:
-                messages.error(request, "Нет задач для переноса")
-                return redirect('home')
+                # messages.error(request, "Нет задач для переноса")
+                # return redirect('home')
+                continue
             task.due_date += timedelta(days=1)
             task.save()
         messages.success(request, f'Перенесено {count} невыполненных задач на завтра.')
