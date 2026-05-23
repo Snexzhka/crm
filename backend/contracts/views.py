@@ -1,4 +1,7 @@
-from django.shortcuts import render
+"""
+Представление для контрактов. Предназначено для создания, обновления и
+удаления контрактов, просмотра списка контрактов и деталей
+"""
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import (
     PermissionRequiredMixin,

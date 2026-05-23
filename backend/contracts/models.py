@@ -1,9 +1,27 @@
+"""
+Модель для контрактов
+"""
 from django.db import models
 
 from products.models import Product
 
 
 class Contract(models.Model):
+    """
+    Модель контрактов
+
+    Каждый контракт имеет название, файл с текстом контракта, дату начала и период
+    действия, стоимость, связь с продуктом и потенциальным клиентом.
+    Поля:
+        name:Название контракта
+        products:связь с продуктом
+        file:файл с текстом контракта
+        start_date:дата начала
+        duration:продолжительность действия в днях
+        cost:стоимость (цена контракта)
+        lead:связь с потенциальным клиентом
+
+    """
     class Meta:
         ordering = ["pk", "name"]
 
@@ -13,7 +31,12 @@ class Contract(models.Model):
     start_date = models.DateField(auto_now_add=True)
     duration = models.DurationField()
     cost = models.DecimalField(default=0, max_digits=8, decimal_places=2)
-    lead = models.ForeignKey("leads.Lead", on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Лид")
+    lead = models.ForeignKey(
+        "leads.Lead",
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        verbose_name="Лид"
+    )
     #profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
     @property

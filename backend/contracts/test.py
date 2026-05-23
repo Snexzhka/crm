@@ -1,20 +1,21 @@
+"""
+Тесты на основе pytest
+"""
 import pytest
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 
-from .models import Contract
-from products.models import Product
 from leads.models import Lead
+from products.models import Product
+from .models import Contract
 
 
 @pytest.mark.django_db
-def test_model_contract(contract, lead, product):
+def test_model_contract(contract):
     """
     Тест проверки создания объектов моделей контрактов.
     :param contract: fixtures
-    :param lead: fixtures
-    :param product: fixtures
     """
     assert contract.lead.first_name == "Test"
     assert contract.products.name == "TestProd"
@@ -42,7 +43,8 @@ def test_view_by_user(auth_user, user):
     """
     Тест проверки возможности просмотра списка контрактов авторизованным пользователем.
     Возвращает код 200 при наличии определенных разрешений.
-    :param client: fixtures
+    :param user: fixtures
+    param auth_user: fixtures
     :return: 200
     """
     url = reverse("contracts:contracts-list")
@@ -62,7 +64,7 @@ def test_view_by_admin(auth_admin):
     """
     Тест проверки возможности просмотра списка контрактов администратором.
     Возвращает код 200.
-    :param client: fixtures
+    :param auth_admin: fixtures
     :return: 200
     """
     url = reverse("contracts:contracts-list")
@@ -90,7 +92,9 @@ def test_detail_by_user(auth_user, contract, user):
     """
     Тест проверки возможности просмотра деталей контрактов авторизованным пользователем.
     Возвращает код 200 при наличии определенных разрешений.
-    :param client: fixtures
+    :param contract: fixtures
+    param user: fixtures
+    param auth_user: fixtures
     :return: 200
     """
     url = reverse("contracts:contracts-detail", kwargs={"pk":contract.pk})
@@ -110,7 +114,8 @@ def test_detail_by_admin(auth_admin, contract):
     """
     Тест проверки возможности просмотра деталей контрактов администратором.
     Возвращает код 200.
-    :param client: fixtures
+    :param contract: fixtures
+    param auth_admin: fixtures
     :return: 200
     """
     url = reverse("contracts:contracts-detail", kwargs={"pk":contract.pk})
@@ -119,12 +124,11 @@ def test_detail_by_admin(auth_admin, contract):
 
 
 @pytest.mark.django_db
-def test_create_contract(client, contract, product, lead):
+def test_create_contract(client,  product, lead):
     """
     Тест проверки невозможности создания контракта неавторизованным пользователем.
     Возвращает код 302 и направляет на страницу входа.
     :param client: fixtures
-    :param contract: fixtures
     :param product: fixtures
     :param lead: fixtures
     :return: 302
@@ -143,15 +147,15 @@ def test_create_contract(client, contract, product, lead):
 
 
 @pytest.mark.django_db
-def test_create_by_user(auth_user, user, contract, product, lead):
+def test_create_by_user(auth_user, user, product, lead):
     """
     Тест проверки возможности создания контракта авторизованным пользователем.
     Возвращает код 302, создает контракт и направляет на страницу списка контрактов
     при наличии определенных прав.
-    :param client: fixtures
-    :param contract: fixtures
     :param product: fixtures
     :param lead: fixtures
+    param user: fixtures
+    param auth_user: fixtures
     :return: 302
     """
     product_ct = ContentType.objects.get_for_model(Product)
@@ -184,12 +188,11 @@ def test_create_by_user(auth_user, user, contract, product, lead):
 
 
 @pytest.mark.django_db
-def test_create_by_admin(auth_admin, contract, product, lead):
+def test_create_by_admin(auth_admin, product, lead):
     """
     Тест проверки возможности создания контракта администратором.
     Возвращает код 302, создает контракт и направляет на страницу списка контрактов.
-    :param client: fixtures
-    :param contract: fixtures
+    :param auth_admin: fixtures
     :param product: fixtures
     :param lead: fixtures
     :return: 302
@@ -239,10 +242,11 @@ def test_update_by_user(auth_user, user, contract, product, lead):
     Тест проверки возможности обновления контракта авторизованным пользователем.
     Возвращает код 302, обновляет контракт и направляет на страницу списка контрактов
     при наличии определенных прав.
-    :param client: fixtures
+    :param auth_user: fixtures
     :param contract: fixtures
     :param product: fixtures
     :param lead: fixtures
+    param user: fixtures
     :return: 302
     """
     product_ct = ContentType.objects.get_for_model(Product)
@@ -278,7 +282,7 @@ def test_update_by_admin(auth_admin, contract, product, lead):
     """
     Тест проверки возможности обновления контракта администратором.
     Возвращает код 302, обновляет контракт и направляет на страницу списка контрактов.
-    :param client: fixtures
+    :param auth_admin: fixtures
     :param contract: fixtures
     :param product: fixtures
     :param lead: fixtures
@@ -299,14 +303,12 @@ def test_update_by_admin(auth_admin, contract, product, lead):
 
 
 @pytest.mark.django_db
-def test_delete_contract(client, contract, product, lead):
+def test_delete_contract(client, contract):
     """
     Тест проверки невозможности удаления контракта неавторизованным пользователем.
     Возвращает код 403.
     :param client: fixtures
     :param contract: fixtures
-    :param product: fixtures
-    :param lead: fixtures
     :return: 403
     """
     url = reverse("contracts:contract-delete", kwargs={"pk":contract.pk})
@@ -315,14 +317,13 @@ def test_delete_contract(client, contract, product, lead):
 
 
 @pytest.mark.django_db
-def test_delete_by_user(auth_user, user, contract, product, lead):
+def test_delete_by_user(auth_user, user, contract):
     """
     Тест проверки невозможности удаления контракта авторизованным пользователем.
     Возвращает код 403 даже при наличии разрешений (что заложено в представлении).
-    :param client: fixtures
+    :param auth_user: fixtures
     :param contract: fixtures
-    :param product: fixtures
-    :param lead: fixtures
+    param user: fixtures
     :return: 403
     """
     url = reverse("contracts:contract-delete", kwargs={"pk":contract.pk})
@@ -339,15 +340,13 @@ def test_delete_by_user(auth_user, user, contract, product, lead):
 
 
 @pytest.mark.django_db
-def test_delete_by_admin(auth_admin, contract, product, lead):
+def test_delete_by_admin(auth_admin, contract):
     """
     Тест проверки возможности удаления контракта администратором.
     Возвращает код 302 и перенаправляет на страницу списка контрактов
     после удаления объекта.
-    :param client: fixtures
+    :param auth_admin: fixtures
     :param contract: fixtures
-    :param product: fixtures
-    :param lead: fixtures
     :return: 302
     """
     url = reverse("contracts:contract-delete", kwargs={"pk":contract.pk})
