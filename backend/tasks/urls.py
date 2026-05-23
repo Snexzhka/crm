@@ -5,12 +5,12 @@
 from django.urls import path
 
 from .views import (
-    TaskListView,
-    TaskDetailView,
-    TaskCreateView,
-    TaskUpdateView,
-    TaskDeleteView,
     RescheduleTasksView,
+    TaskCreateView,
+    TaskDeleteView,
+    TaskDetailView,
+    TaskListView,
+    TaskUpdateView,
 )
 
 app_name = "tasks"

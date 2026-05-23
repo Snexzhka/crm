@@ -5,25 +5,25 @@
 
 from datetime import timedelta
 
-from django.core.exceptions import PermissionDenied
-from django.shortcuts import redirect
-from django.urls import reverse_lazy, reverse
-from django.utils import timezone
-
 from django.contrib import messages
-from django.views import View
-from django.views.generic import (
-    ListView,
-    DetailView,
-    CreateView,
-    UpdateView,
-    DeleteView,
-)
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
     UserPassesTestMixin,
 )
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import redirect
+from django.urls import reverse, reverse_lazy
+from django.utils import timezone
+from django.views import View
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
+
 from .forms import TaskForm
 from .models import Task
 
