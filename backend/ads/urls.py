@@ -6,12 +6,12 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from .views import (
-    AdventView,
-    AdventCreateView,
-    AdventDetail,
-    AdventDeleteView,
-    AdvertUpdateView,
     AdStatisticsView,
+    AdventCreateView,
+    AdventDeleteView,
+    AdventDetail,
+    AdventView,
+    AdvertUpdateView,
 )
 
 app_name = "ads"

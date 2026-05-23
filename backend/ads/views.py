@@ -3,28 +3,28 @@
 удаление и обновление услуги.
 """
 
-from django.db import models
-from django.db.models import (
-    Count,
-    ExpressionWrapper,
-    FloatField,
-    F,
-    Sum,
-    Value,
-    Case,
-    When,
-)
-from django.db.models.functions import Coalesce
-from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import (
     PermissionRequiredMixin,
     UserPassesTestMixin,
 )
+from django.db import models
+from django.db.models import (
+    Case,
+    Count,
+    ExpressionWrapper,
+    F,
+    FloatField,
+    Sum,
+    Value,
+    When,
+)
+from django.db.models.functions import Coalesce
+from django.urls import reverse, reverse_lazy
 from django.views.generic import (
-    ListView,
     CreateView,
-    DetailView,
     DeleteView,
+    DetailView,
+    ListView,
     UpdateView,
 )
 
