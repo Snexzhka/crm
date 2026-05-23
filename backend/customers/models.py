@@ -1,6 +1,7 @@
 """
 Модель для приложения активных клиентов
 """
+
 from django.db import models
 
 from leads.models import Lead
@@ -17,28 +18,34 @@ class Customer(models.Model):
         contract:связь с контрактом
 
     """
-    lead: models.ForeignKey['Lead'] = models.ForeignKey(
+
+    lead: models.ForeignKey["Lead"] = models.ForeignKey(
         "leads.Lead",
         on_delete=models.DO_NOTHING,
-        related_name="customers"
+        related_name="customers",
     )
-    contract: models.ForeignKey['Contract'] = models.ForeignKey(
+    contract: models.ForeignKey["Contract"] = models.ForeignKey(
         "contracts.Contract",
         on_delete=models.SET_DEFAULT,
         default="",
-        related_name="customers"
+        related_name="customers",
     )
 
     def get_profile(self):
         profiles = Lead.objects.filter(profile=self)
         contracts = Contract.objects.filter(contract=self)
-        return [{"name":p.first_name, "lastname": p.last_name if p.last_name else "",
-                 "phone":p.phone, "email":p.email}
+        return [
+            {
+                "name": p.first_name,
+                "lastname": p.last_name if p.last_name else "",
+                "phone": p.phone,
+                "email": p.email,
+            }
             for p in profiles
-        ], [{"date":contract.start_date+contract.duration}
-            for contract in contracts]
-
+        ], [{"date": contract.start_date + contract.duration} for contract in contracts]
 
     def __str__(self):
-        return (f"{self.lead.first_name} {self.lead.last_name}-"
-                f"{self.contract.name}{self.contract.start_date}")
+        return (
+            f"{self.lead.first_name} {self.lead.last_name}-"
+            f"{self.contract.name}{self.contract.start_date}"
+        )

@@ -1,11 +1,13 @@
 """
-Формы для приложения 'customers'.
+Формы для приложения "customers".
 
 Содержит форму для отображения полей
 """
+
 from django import forms
 
 from .models import Customer
+
 
 class CustomerForm(forms.ModelForm):
     class Meta:

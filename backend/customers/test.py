@@ -1,6 +1,7 @@
 """
 Тестирование на основе pytest
 """
+
 from datetime import timedelta
 import pytest
 
@@ -18,16 +19,19 @@ def test_model_customer(customer, lead, contract):
     """
     Тест проверки создания объектов моделей активных клинтов
     """
+
     assert customer.contract.name == "TestContract"
     assert customer.lead.first_name == "Test"
     assert customer.contract.cost == 10000
     assert customer.lead.email == "test@test.by"
+
 
 @pytest.mark.django_db
 def test_view_customer(client):
     """
     Тест проверки невозможности просмотра списка клиентов неавторизованным пользователем
     """
+
     url = reverse("customers:customers-list")
     response = client.get(url)
     assert response.status_code == 302
@@ -40,12 +44,16 @@ def test_view_by_user(auth_user, user):
     Тест проверки возможности просмотра списка клиентов авторизованным пользователем.
     Возможно после получения доп.прав
     """
+
     url = reverse("customers:customers-list")
     response = auth_user.get(url)
     assert response.status_code == 403
 
     content_type = ContentType.objects.get_for_model(Customer)
-    permission = Permission.objects.get(content_type=content_type, codename='view_customer')
+    permission = Permission.objects.get(
+        content_type=content_type,
+        codename="view_customer",
+    )
     user.user_permissions.add(permission)
 
     response = auth_user.get(url)
@@ -59,6 +67,7 @@ def test_view_by_admin(auth_admin):
     :param auth_admin: fixture
     :return: 200
     """
+
     url = reverse("customers:customers-list")
     response = auth_admin.get(url)
     assert response.status_code == 200
@@ -72,7 +81,8 @@ def test_detail_customer(client, customer):
     :param customer: fixture
     :return: 302
     """
-    url = reverse("customers:customers-detail", kwargs={"pk":customer.pk})
+
+    url = reverse("customers:customers-detail", kwargs={"pk": customer.pk})
     response = client.get(url)
     assert response.status_code == 302
     assert "login" in response.url
@@ -87,12 +97,15 @@ def test_detail_by_user(auth_user, customer, user):
      :param user: fixture
     :return: 200
     """
-    url = reverse("customers:customers-detail", kwargs={"pk":customer.pk})
+
+    url = reverse("customers:customers-detail", kwargs={"pk": customer.pk})
     response = auth_user.get(url)
     assert response.status_code == 403
 
     content_type = ContentType.objects.get_for_model(Customer)
-    permission = Permission.objects.get(content_type=content_type, codename='view_customer')
+    permission = Permission.objects.get(
+        content_type=content_type, codename="view_customer"
+    )
     user.user_permissions.add(permission)
 
     response = auth_user.get(url)
@@ -107,7 +120,8 @@ def test_detail_by_admin(auth_admin, customer):
     :param customer: fixture
     :return: 200
     """
-    url = reverse("customers:customers-detail", kwargs={"pk":customer.pk})
+
+    url = reverse("customers:customers-detail", kwargs={"pk": customer.pk})
     response = auth_admin.get(url)
     assert response.status_code == 200
 
@@ -115,6 +129,7 @@ def test_detail_by_admin(auth_admin, customer):
 @pytest.mark.django_db
 def test_create_customer(client, lead, ads, product):
     """
+
     Тест невозможности создания клиента неавторизованным пользователем.
     Возвращает на страницу входа
     :param client: fixture
@@ -123,6 +138,7 @@ def test_create_customer(client, lead, ads, product):
     :param product: fixture
     :return: 302
     """
+
     new_lead = Lead.objects.create(
         first_name="TestNew",
         last_name="testych",
@@ -140,8 +156,8 @@ def test_create_customer(client, lead, ads, product):
     )
 
     data = {
-        "lead":new_lead.pk,
-        "contract":new_contract.pk,
+        "lead": new_lead.pk,
+        "contract": new_contract.pk,
     }
     url = reverse("customers:customers-create")
     response = client.post(url, data)
@@ -160,6 +176,7 @@ def test_create_by_user(auth_user, user, lead, ads, product):
     :param user: fixture
     :return: 302
     """
+
     new_lead = Lead.objects.create(
         first_name="TestNew",
         last_name="testych",
@@ -186,8 +203,12 @@ def test_create_by_user(auth_user, user, lead, ads, product):
     assert response.status_code == 403
 
     content_type = ContentType.objects.get_for_model(Customer)
-    add_permission = Permission.objects.get(content_type=content_type, codename='add_customer')
-    view_permission = Permission.objects.get(content_type=content_type, codename='view_customer')
+    add_permission = Permission.objects.get(
+        content_type=content_type, codename="add_customer"
+    )
+    view_permission = Permission.objects.get(
+        content_type=content_type, codename="view_customer"
+    )
     user.user_permissions.add(view_permission, add_permission)
 
     response = auth_user.post(url, data)
@@ -205,6 +226,7 @@ def test_create_by_admin(auth_admin, lead, ads, product):
     :param product: fixture
     :return: 302
     """
+
     new_lead = Lead.objects.create(
         first_name="TestNew",
         last_name="testych",
@@ -244,6 +266,7 @@ def test_update_customer(client, customer, lead, ads, product):
     :param product: fixture
     :return: 302
     """
+
     new_lead = Lead.objects.create(
         first_name="TestUpdate",
         last_name="testych_upd",
@@ -261,10 +284,10 @@ def test_update_customer(client, customer, lead, ads, product):
     )
 
     data = {
-        "lead":new_lead.pk,
-        "contract":new_contract.pk,
+        "lead": new_lead.pk,
+        "contract": new_contract.pk,
     }
-    url = reverse("customers:customer_update", kwargs={"pk":customer.pk})
+    url = reverse("customers:customer_update", kwargs={"pk": customer.pk})
     response = client.post(url, data)
     assert response.status_code == 302
     assert "login" in response.url
@@ -283,6 +306,7 @@ def test_update_by_user(auth_user, user, customer, lead, ads, product):
     :param user: fixture
     :return: 302
     """
+
     new_lead = Lead.objects.create(
         first_name="TestUpdate",
         last_name="testych_upd",
@@ -300,19 +324,20 @@ def test_update_by_user(auth_user, user, customer, lead, ads, product):
     )
 
     data = {
-        "lead":new_lead.pk,
-        "contract":new_contract.pk,
+        "lead": new_lead.pk,
+        "contract": new_contract.pk,
     }
-    url = reverse("customers:customer_update", kwargs={"pk":customer.pk})
+    url = reverse("customers:customer_update", kwargs={"pk": customer.pk})
     response = auth_user.post(url, data)
     assert response.status_code == 403
 
     content_type = ContentType.objects.get_for_model(Customer)
     change_permission = Permission.objects.get(
-        content_type=content_type,
-        codename='change_customer'
+        content_type=content_type, codename="change_customer"
     )
-    view_permission = Permission.objects.get(content_type=content_type, codename='view_customer')
+    view_permission = Permission.objects.get(
+        content_type=content_type, codename="view_customer"
+    )
     user.user_permissions.add(view_permission, change_permission)
 
     response = auth_user.post(url, data)
@@ -334,6 +359,7 @@ def test_update_by_admin(auth_admin, customer, lead, ads, product):
     :param product: fixture
     :return: 302
     """
+
     new_lead = Lead.objects.create(
         first_name="TestUpdate",
         last_name="testych_upd",
@@ -351,10 +377,10 @@ def test_update_by_admin(auth_admin, customer, lead, ads, product):
     )
 
     data = {
-        "lead":new_lead.pk,
-        "contract":new_contract.pk,
+        "lead": new_lead.pk,
+        "contract": new_contract.pk,
     }
-    url = reverse("customers:customer_update", kwargs={"pk":customer.pk})
+    url = reverse("customers:customer_update", kwargs={"pk": customer.pk})
     response = auth_admin.post(url, data)
     assert response.status_code == 302
     customer.refresh_from_db()
@@ -371,7 +397,8 @@ def test_delete_customer(client, customer):
     :param customer: fixture
     :return: 302
     """
-    url = reverse("customers:customer-delete", kwargs={"pk":customer.pk})
+
+    url = reverse("customers:customer-delete", kwargs={"pk": customer.pk})
     response = client.post(url)
     assert response.status_code == 302
     assert "login" in response.url
@@ -388,16 +415,18 @@ def test_delete_by_user(auth_user, user, customer):
     :param user: fixture
     :return: 302
     """
-    url = reverse("customers:customer-delete", kwargs={"pk":customer.pk})
+
+    url = reverse("customers:customer-delete", kwargs={"pk": customer.pk})
     response = auth_user.post(url)
     assert response.status_code == 403
 
     content_type = ContentType.objects.get_for_model(Customer)
     delete_permission = Permission.objects.get(
-        content_type=content_type,
-        codename='delete_customer'
+        content_type=content_type, codename="delete_customer"
     )
-    view_permission = Permission.objects.get(content_type=content_type, codename='view_customer')
+    view_permission = Permission.objects.get(
+        content_type=content_type, codename="view_customer"
+    )
     user.user_permissions.add(view_permission, delete_permission)
 
     response = auth_user.post(url)
@@ -415,7 +444,8 @@ def test_delete_by_admin(auth_admin, customer, lead, contract):
     :param contract: fixture
     :return: 302
     """
-    url = reverse("customers:customer-delete", kwargs={"pk":customer.pk})
+
+    url = reverse("customers:customer-delete", kwargs={"pk": customer.pk})
     response = auth_admin.post(url)
     assert response.status_code == 302
     assert not Customer.objects.filter(pk=customer.pk).exists()

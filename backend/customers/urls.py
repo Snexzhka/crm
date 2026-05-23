@@ -1,6 +1,7 @@
 """
 Подключение ссылок для работы приложения
 """
+
 from django.urls import path
 
 from .views import (
@@ -9,7 +10,6 @@ from .views import (
     CustomerDeleteView,
     CustomerDetailView,
     CustomerUpdateView,
-
 )
 
 app_name = "customers"
@@ -20,5 +20,4 @@ urlpatterns = [
     path("<int:pk>/", CustomerDetailView.as_view(), name="customers-detail"),
     path("<int:pk>/edit/", CustomerUpdateView.as_view(), name="customer_update"),
     path("<int:pk>/delete/", CustomerDeleteView.as_view(), name="customer-delete"),
-
-    ]
+]

@@ -3,6 +3,7 @@
 активных клиентов, создания, удаления и обновления
 клиентов
 """
+
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import (
     PermissionRequiredMixin,
@@ -20,11 +21,13 @@ from django.views.generic import (
 from .models import Customer
 from .forms import CustomerForm
 
+
 class CustomerListView(PermissionRequiredMixin, ListView):
     """
     Представление для просмотра списка активных клиентов. Для просмотра нужно разрешение
     на просмотр или права админа.
     """
+
     permission_required = "customers.view_customer"
     template_name = "customers/customers-list.html"
     model = Customer
@@ -37,6 +40,7 @@ class CustomerDetailView(PermissionRequiredMixin, DetailView):
     Представление для просмотра деталей активных клиентов. Для просмотра нужно разрешение
     на просмотр или права админа.
     """
+
     permission_required = "customers.view_customer"
     template_name = "customers/customers-detail.html"
     queryset = Customer.objects.select_related("lead", "contract")
@@ -48,6 +52,7 @@ class CustomerCreateView(PermissionRequiredMixin, CreateView):
     Представление для создания активных клиентов. Для создания нужно разрешение
     на создание или права админа.
     """
+
     permission_required = "customers.add_customer"
     model = Customer
     success_url = reverse_lazy("customers:customers-list")
@@ -65,6 +70,7 @@ class CustomerUpdateView(PermissionRequiredMixin, UpdateView):
     Представление для обновления активных клиентов. Для обновления нужно разрешение
     на обновление или права админа.
     """
+
     permission_required = "customers.change_customer"
     model = Customer
     fields = "lead", "contract"
@@ -78,6 +84,7 @@ class CustomerDeleteView(UserPassesTestMixin, DeleteView):
     """
     Представление для удаления активных клиентов. Для обновления нужны права админа.
     """
+
     def test_func(self):
         return self.request.user.is_superuser
 
