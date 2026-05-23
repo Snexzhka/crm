@@ -1,6 +1,9 @@
-from django.contrib.auth.models import User
 import pytest
+
+from django.contrib.auth import get_user_model
 from django.urls import reverse
+
+User = get_user_model()
 
 
 @pytest.mark.parametrize("field, value", [
@@ -56,11 +59,10 @@ def test_register_success(client):
 
 
 @pytest.mark.django_db
-def test_login(client, user):
+def test_login(client):
     """
     Тест проверки входа пользователя. Возвращает код 302 и отправляет на главную страницу.
     :param client: fiхtures
-    :param user: fiхtures
     :return: 302
     """
     url = reverse("accounts:login")
@@ -73,11 +75,10 @@ def test_login(client, user):
 
 
 @pytest.mark.django_db
-def test_invalid_password(client, user):
+def test_invalid_password(client):
     """
     Тест проверки входа с ошибочными данными. Пользователь не входит.
     :param client: fiхtures
-    :param user: fiхtures
     :return: 200
     """
     url = reverse("accounts:login")
@@ -89,11 +90,10 @@ def test_invalid_password(client, user):
     assert response.context['form'].errors
     assert 'form' in response.context
 
-def test_logout(client, user, auth_user):
+def test_logout(client, auth_user):
     """
     Тест проверки выхода. Возвращает код 302 и направляет на страницу входа.
     :param client: fiхtures
-    :param user: fiхtures
     :return: 200
     """
     url = reverse("accounts:logout")
@@ -109,12 +109,11 @@ def test_logout(client, user, auth_user):
     assert "login" in response.url
 
 
-def test_error_register(client, user):
+def test_error_register(client):
     """
     Тест попытки повторной регистрации пользователя.
     Пользователь не создан.
     :param client: fiхtures
-    :param user: fiхtures
     :return: 200
     """
     url = reverse('accounts:registers')
