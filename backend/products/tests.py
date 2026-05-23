@@ -1,13 +1,19 @@
+"""
+Тестирование на основе TestCase
+"""
 import os
 import shutil
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase, Client
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.urls import reverse
 
 from .models import Product
+
+User = get_user_model()
 
 
 class ProductModelTest(TestCase):
@@ -38,8 +44,8 @@ class ProductTestView(TestCase):
     @classmethod
     def setUpClass(cls):
         """
-        Метод установки значений перед прогоном всех тестов, отрабатывает один раз перед
-        началом всех тестов.
+        Метод установки значений перед прогоном всех тестов, отрабатывает один раз
+        перед началом всех тестов.
         """
         super().setUpClass()
         cls.marketer = User.objects.create_user(
@@ -55,8 +61,8 @@ class ProductTestView(TestCase):
     @classmethod
     def tearDownClass(cls):
         """
-        Метод для удаления медиа файлов после прогона всех тестов. Запускается в конце, после
-        отработки всех тестов.
+        Метод для удаления медиа файлов после прогона всех тестов. Запускается в конце,
+        после отработки всех тестов.
         """
         # Проверяем, существует ли переопределённая настройка
         if hasattr(cls, '_overridden_settings') and cls._overridden_settings:
@@ -140,7 +146,10 @@ class ProductTestView(TestCase):
         детали услуг. Возвращает код 302 и перенаправляет на страницу входа.
         """
         self.client.logout()
-        response = self.client.get(reverse("products:product-detail", kwargs={"pk":self.product.pk}))
+        response = self.client.get(reverse(
+            "products:product-detail",
+            kwargs={"pk":self.product.pk})
+        )
         self.assertEqual(response.status_code, 302)
         self.assertIn(str(settings.LOGIN_URL), response.url)
 
@@ -151,14 +160,20 @@ class ProductTestView(TestCase):
          После получения разрешения возвращает код 200.
         """
         self.login_marketer()
-        response = self.client.get(reverse("products:product-detail", kwargs={"pk":self.product.pk}))
+        response = self.client.get(reverse(
+            "products:product-detail",
+            kwargs={"pk":self.product.pk})
+        )
         self.assertEqual(response.status_code, 403)
 
         content_type = ContentType.objects.get_for_model(Product)
         permission = Permission.objects.get(content_type=content_type, codename='view_product')
         self.marketer.user_permissions.add(permission)
 
-        response = self.client.get(reverse("products:product-detail", kwargs={"pk":self.product.pk}))
+        response = self.client.get(reverse(
+            "products:product-detail",
+            kwargs={"pk":self.product.pk})
+        )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "testProduct")
         self.assertEqual(len(response.context), 2)
@@ -190,9 +205,9 @@ class ProductTestView(TestCase):
     def test_create_product_marketer(self):
         """
         Тест проверки возможности создания услуги авторизованным пользователем,
-        возвращает код 403 (отсутствие разрешения), при выдаче разрешения на создание услуги
-        и, чтоб посмотреть результат, на просмотр, возвращается код 302 (перенаправление на список
-        услуг согласно представлению).
+        возвращает код 403 (отсутствие разрешения), при выдаче разрешения на
+        создание услуги и, чтоб посмотреть результат, на просмотр, возвращается
+        код 302 (перенаправление на список услуг согласно представлению).
         """
         self.login_marketer()
         data = {
@@ -247,8 +262,11 @@ class ProductTestView(TestCase):
             "name": "TestProdUpdate",
             "cost": 90.00,
         }
-        response = self.client.post(reverse("products:product-update", kwargs={"pk":self.product.pk}),
-                                    data=data)
+        response = self.client.post(reverse(
+            "products:product-update",
+            kwargs={"pk":self.product.pk}),
+            data=data
+        )
         self.assertEqual(response.status_code, 302)
         self.assertIn(str(settings.LOGIN_URL), response.url)
 
@@ -264,20 +282,35 @@ class ProductTestView(TestCase):
             "name": "TestProdUpdate",
             "cost": 90.00,
         }
-        response = self.client.post(reverse("products:product-update", kwargs={"pk": self.product.pk}),
-                                    data=data)
+        response = self.client.post(reverse(
+            "products:product-update",
+            kwargs={"pk": self.product.pk}),
+            data=data
+        )
         self.assertEqual(response.status_code, 403)
 
         content_type = ContentType.objects.get_for_model(Product)
-        change_permission = Permission.objects.get(content_type=content_type, codename='change_product')
-        view_permission = Permission.objects.get(content_type=content_type, codename='view_product')
+        change_permission = Permission.objects.get(
+            content_type=content_type,
+            codename='change_product'
+        )
+        view_permission = Permission.objects.get(
+            content_type=content_type,
+            codename='view_product'
+        )
         self.marketer.user_permissions.add(change_permission, view_permission)
 
-        response = self.client.post(reverse("products:product-update", kwargs={"pk": self.product.pk}),
-                                    data=data)
+        response = self.client.post(reverse(
+            "products:product-update",
+            kwargs={"pk": self.product.pk}),
+            data=data
+        )
         self.assertEqual(response.status_code, 302)
         self.product.refresh_from_db()
-        self.assertRedirects(response, reverse("products:product-detail", kwargs={"pk":self.product.pk}))
+        self.assertRedirects(response, reverse(
+            "products:product-detail",
+            kwargs={"pk":self.product.pk})
+                             )
         self.assertTrue(Product.objects.filter(name="TestProdUpdate").exists())
         self.assertEqual(self.product.name, "TestProdUpdate")
 
@@ -293,11 +326,17 @@ class ProductTestView(TestCase):
             "cost": 90.00,
             "description":"qwe1"
         }
-        response = self.client.post(reverse("products:product-update", kwargs={"pk": self.product.pk}),
-                                    data=data)
+        response = self.client.post(reverse(
+            "products:product-update",
+            kwargs={"pk": self.product.pk}),
+            data=data
+        )
         self.assertEqual(response.status_code, 302)
         self.product.refresh_from_db()
-        self.assertRedirects(response, reverse("products:product-detail", kwargs={"pk":self.product.pk}))
+        self.assertRedirects(response, reverse(
+            "products:product-detail",
+            kwargs={"pk":self.product.pk})
+                             )
         self.assertEqual(self.product.description, "qwe1")
 
 
@@ -307,7 +346,10 @@ class ProductTestView(TestCase):
         Возвращает код 403.
         """
         self.client.logout()
-        response = self.client.post(reverse("products:product-delete", kwargs={"pk":self.product.pk}))
+        response = self.client.post(reverse(
+            "products:product-delete",
+            kwargs={"pk":self.product.pk})
+        )
         self.assertEqual(response.status_code, 403)
 
     def test_delete_prod_marketer(self):
@@ -317,15 +359,27 @@ class ProductTestView(TestCase):
         так как в представлении заложено удаление только администратором.
         """
         self.login_marketer()
-        response = self.client.post(reverse("products:product-delete", kwargs={"pk": self.product.pk}))
+        response = self.client.post(reverse(
+            "products:product-delete",
+            kwargs={"pk": self.product.pk})
+        )
         self.assertEqual(response.status_code, 403)
 
         content_type = ContentType.objects.get_for_model(Product)
-        delete_permission = Permission.objects.get(content_type=content_type, codename='delete_product')
-        view_permission = Permission.objects.get(content_type=content_type, codename='view_product')
+        delete_permission = Permission.objects.get(
+            content_type=content_type,
+            codename='delete_product'
+        )
+        view_permission = Permission.objects.get(
+            content_type=content_type,
+            codename='view_product'
+        )
         self.marketer.user_permissions.add(delete_permission, view_permission)
 
-        response = self.client.post(reverse("products:product-delete", kwargs={"pk": self.product.pk}))
+        response = self.client.post(reverse(
+            "products:product-delete",
+            kwargs={"pk": self.product.pk})
+        )
         self.assertEqual(response.status_code, 403)
 
 
@@ -335,7 +389,10 @@ class ProductTestView(TestCase):
         Возвращает код 302 и перенаправляет на список услуг.
         """
         self.login_admin()
-        response = self.client.post(reverse("products:product-delete", kwargs={"pk": self.product.pk}))
+        response = self.client.post(reverse(
+            "products:product-delete",
+            kwargs={"pk": self.product.pk})
+        )
         self.assertEqual(response.status_code, 302)
         self.assertFalse(Product.objects.filter(name="testProduct").exists())
         self.assertRedirects(response, reverse("products:product-list"))

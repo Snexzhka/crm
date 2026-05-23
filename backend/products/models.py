@@ -1,6 +1,17 @@
+"""
+Модель для создания объектов услуг
+"""
 from django.db import models
 
 class Product(models.Model):
+    """
+    Модель для услуг. Содержит название услуги, описание и цену.
+    Поля:
+        name:название услуги
+        description:описание услуги
+        cost:цена услуги
+
+    """
     class Meta:
         ordering = ["name"]
 

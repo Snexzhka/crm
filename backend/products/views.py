@@ -1,5 +1,7 @@
-from django.db.models import Count
-from django.shortcuts import render
+"""
+Представление для услуг. Реализует методы создания, обновления и удаления услуг,
+просмотра списка и деталей услуг
+"""
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import (
     PermissionRequiredMixin,
