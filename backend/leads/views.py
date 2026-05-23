@@ -1,5 +1,10 @@
+"""
+Представления для работы приложения потенциальных клиентов. Реализуют функции
+по созданию, обновлению и удалению потенциальных клиентов, просмотр
+списка и деталей клиентов.
+"""
 from django.contrib import messages
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import (
     PermissionRequiredMixin,
@@ -17,10 +22,9 @@ from django.views.generic import (
 
 )
 
-from .models import Lead
-from .forms import ProfileForm, ConvertLeadForm
 from customers.models import Customer
-
+from .forms import ProfileForm, ConvertLeadForm
+from .models import Lead
 
 class LeadListView(PermissionRequiredMixin, ListView):
     """

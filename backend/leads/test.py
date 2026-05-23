@@ -1,11 +1,15 @@
+"""
+Тесты на основе pytest
+"""
 import pytest
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 
-from .models import Lead
+
 from ads.models import Advert
 from products.models import Product
+from .models import Lead
 
 @pytest.mark.django_db
 def test_lead_model(lead, ads):
@@ -39,7 +43,8 @@ def test_view_by_user(auth_user, user):
     """
     Тест возможности просмотра списка клиентов авторизованным пользователем.
     Возвращает код 200 при предоставлении разрешений.
-    :param client: fixture
+    :param auth_user: fixture
+    :param user: fixture
     :return: 200
     """
     url = reverse("leads:leads-list")
@@ -60,7 +65,7 @@ def test_view_by_admin(auth_admin):
     """
     Тест возможности просмотра списка клиентов администратором.
     Возвращает код 200.
-    :param client: fixture
+    :param auth_admin: fixture
     :return: 200
     """
     url = reverse("leads:leads-list")
@@ -89,8 +94,9 @@ def test_detail_by_user(auth_user, lead, user):
     """
     Тест проверки возможности просмотра деталей клиента авторизованным пользователем.
     Возвращает код 200 при наличии определенных прав.
-    :param client: fixture
+    :param auth_user: fixture
     :param lead: fixture
+    :param user: fixture
     :return: 200
     """
     url = reverse("leads:leads-detail", kwargs={"pk": lead.pk})
@@ -111,7 +117,7 @@ def test_detail_by_admin(auth_admin, lead):
     """
     Тест проверки возможности просмотра деталей клиента администратором.
     Возвращает код 200.
-    :param client: fixture
+    :param auth_admin: fixture
     :param lead: fixture
     :return: 200
     """
@@ -128,6 +134,7 @@ def test_create_lead(client, lead, ads):
     Возвращает код 302 и перенаправляет на страницу входа.
     :param client: fixture
     :param lead: fixture
+    :param ads: fixture
     :return: 302
     """
     data = {
@@ -148,8 +155,10 @@ def test_create_by_user(auth_user, lead, user, ads):
     """
     Тест проверки возможности создания клиента авторизованным пользователем.
     Возвращает код 302 и создает клиента при наличии определенных прав.
-    :param client: fixture
+    :param auth_user: fixture
     :param lead: fixture
+    :param user: fixture
+    :param ads: fixture
     :return: 302
     """
     product_ct = ContentType.objects.get_for_model(Product)
@@ -186,8 +195,9 @@ def test_create_by_admin(auth_admin, lead, ads):
     """
     Тест проверки возможности создания клиента администратором.
     Возвращает код 302 и перенаправляет на страницу списка клиентов.
-    :param client: fixture
+    :param auth_admin: fixture
     :param lead: fixture
+    :param ads: fixture
     :return: 302
     """
     data = {
@@ -234,9 +244,10 @@ def test_update_by_user(auth_user, lead, ads, user):
     Тест проверки возможности обновления клиента авторизованным пользователем.
     Возвращает код 302 и направляет на страницу деталей клиента
     при наличии определенных прав.
-    :param client: fixture
+    :param auth_user: fixture
     :param lead: fixture
     :param ads: fixture
+    :param user: fixture
     :return: 302
     """
     product_ct = ContentType.objects.get_for_model(Product)
@@ -272,9 +283,10 @@ def test_update_by_admin(auth_admin, lead, ads, user):
     """
     Тест проверки возможности обновления клиента администратором.
     Возвращает код 302 и направляет на страницу деталей клиента.
-    :param client: fixture
+    :param auth_admin: fixture
     :param lead: fixture
     :param ads: fixture
+    :param user: fixture
     :return: 302
     """
     data = {
@@ -312,8 +324,9 @@ def test_delete_by_user(auth_user, lead, user):
     Тест проверки невозможности удаления клиента авторизованным пользователем.
     Возвращает код 403 даже при наличии определенных прав (такое удаление заложено
     в представлении)
-    :param client: fixture
+    :param auth_user: fixture
     :param lead: fixture
+    :param user: fixture
     :return: 403
     """
     product_ct = ContentType.objects.get_for_model(Product)
@@ -340,7 +353,7 @@ def test_delete_by_admin(auth_admin, lead):
     """
     Тест проверки возможности удаления клиента администратором.
     Возвращает код 302 и направляет на страницу списка клиентов.
-    :param client: fixture
+    :param auth_admin: fixture
     :param lead: fixture
     :return: 302
     """

@@ -1,7 +1,20 @@
+"""
+Модель для приложения "leads"
+"""
 from django.db import models
 
 
 class Lead(models.Model):
+    """
+    Модель для создания объектов потенциальных клиентов. Содержит поля
+    ФИО, телефон, емайл, связь с рекламной компанией.
+    Поля:
+        first_name:имя
+        last_name:фамилия
+        phone:телефон
+        email:емайл
+        advert_name:связь с таблицей рекламы
+    """
     class Meta:
         ordering = ["pk", "first_name"]
 

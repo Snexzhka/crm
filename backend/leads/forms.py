@@ -1,9 +1,16 @@
+"""
+Формы для приложения потенциальных клиентов
+"""
 from django import forms
 
 from contracts.models import Contract
 from .models import Lead
 
 class ProfileForm(forms.ModelForm):
+    """
+    Определены поля для отображения при создании и обновлении
+    объектов модели
+    """
     class Meta:
         model = Lead
         fields = ["first_name", "last_name", "phone", "email", "advert_name"]

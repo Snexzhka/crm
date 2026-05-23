@@ -1,8 +1,12 @@
+"""
+Тесты на основе TestCase
+"""
 import os
 import shutil
 
 from django.conf import settings
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase, Client
 from django.urls import reverse
@@ -10,6 +14,8 @@ from django.urls import reverse
 from ads.models import Advert
 from products.models import Product
 from .models import Lead
+
+User = get_user_model()
 
 class LeadsModelsTest(TestCase):
     """
@@ -119,7 +125,7 @@ class LeadsViewTest(TestCase):
         return self.client.login(username="Admin", password="AdminPassword")
 
 
-    def test_View_leads(self):
+    def test_view_leads(self):
         """
         Тест проверки невозможности просмотра списка лидов неавторизованным пользователем.
         Возвращает код 302 и перенаправляет на страницу входа.
@@ -308,7 +314,10 @@ class LeadsViewTest(TestCase):
 
         content_type = ContentType.objects.get_for_model(Lead)
         view_permission = Permission.objects.get(content_type=content_type, codename='view_lead')
-        change_permission = Permission.objects.get(content_type=content_type, codename='change_lead')
+        change_permission = Permission.objects.get(
+            content_type=content_type,
+            codename='change_lead'
+        )
         self.operator.user_permissions.add(view_permission, change_permission)
 
         response = self.client.post(reverse("leads:leads-update", kwargs={"pk": self.lead.pk}),
@@ -370,7 +379,10 @@ class LeadsViewTest(TestCase):
 
         content_type = ContentType.objects.get_for_model(Lead)
         view_permission = Permission.objects.get(content_type=content_type, codename='view_lead')
-        delete_permission = Permission.objects.get(content_type=content_type, codename='delete_lead')
+        delete_permission = Permission.objects.get(
+            content_type=content_type,
+            codename='delete_lead'
+        )
         self.operator.user_permissions.add(view_permission, delete_permission)
 
         response = self.client.post(reverse("leads:leads-delete", kwargs={"pk": self.lead.pk}))

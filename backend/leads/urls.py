@@ -1,5 +1,7 @@
-from django.contrib import admin
-from django.urls import path, include
+"""
+подключение ссылок приложения "leads"
+"""
+from django.urls import path
 
 from .views import (
     LeadListView,
