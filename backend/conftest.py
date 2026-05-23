@@ -2,7 +2,8 @@ import datetime
 
 import pytest
 from django.contrib.auth import get_user_model
-#from pytest_django.fixtures import client
+
+# from pytest_django.fixtures import client
 
 from ads.models import Advert
 from contracts.models import Contract
@@ -11,17 +12,14 @@ from leads.models import Lead
 from products.models import Product
 from tasks.models import Task
 
-
 User = get_user_model()
 
 # pylint: disable=redefined-outer-name
 
+
 @pytest.fixture
 def user(db):
-    return User.objects.create_user(
-        username="TestUser",
-             password="Test1999"
-             )
+    return User.objects.create_user(username="TestUser", password="Test1999")
 
 
 @pytest.fixture
@@ -32,20 +30,22 @@ def product(db):
         cost=100,
     )
 
+
 @pytest.fixture
 def ads(db, product):
     return Advert.objects.create(
-        name = "TestAdvert",
+        name="TestAdvert",
         products=product,
         promotion_path="testpromo",
         budget=150,
     )
 
+
 @pytest.fixture
 def task(db, user):
     return Task.objects.create(
         user=user,
-        title = "TestTask",
+        title="TestTask",
         description="Desc",
         due_date=datetime.datetime.now(),
         is_completed=False,
@@ -62,6 +62,7 @@ def lead(db, ads):
         advert_name=ads,
     )
 
+
 @pytest.fixture
 def contract(db, product, lead):
     return Contract.objects.create(
@@ -72,6 +73,7 @@ def contract(db, product, lead):
         duration=datetime.timedelta(days=5),
     )
 
+
 @pytest.fixture
 def customer(db, lead, contract):
     return Customer.objects.create(
@@ -79,20 +81,19 @@ def customer(db, lead, contract):
         contract=contract,
     )
 
+
 @pytest.fixture
 def user_admin(db):
-    return User.objects.create_superuser(
-        username="Admin",
-        password="Passwort111"
-    )
+    return User.objects.create_superuser(username="Admin", password="Passwort111")
+
 
 @pytest.fixture
 def auth_user(client, user):
-    client.login(username=user.username,  password="Test1999")
+    client.login(username=user.username, password="Test1999")
     return client
 
 
 @pytest.fixture
 def auth_admin(client, user_admin):
-    client.login(username=user_admin.username,  password="Passwort111")
+    client.login(username=user_admin.username, password="Passwort111")
     return client
