@@ -18,11 +18,11 @@ class Lead(models.Model):
     class Meta:
         ordering = ["pk", "first_name"]
 
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=150, null=True, blank=True)
-    phone = models.CharField(max_length=20)
-    email = models.EmailField(null=False, blank=True)
-    advert_name = models.ForeignKey(
+    first_name: models.CharField = models.CharField(max_length=100)
+    last_name: models.CharField = models.CharField(max_length=150, null=True, blank=True)
+    phone: models.CharField = models.CharField(max_length=20)
+    email: models.EmailField = models.EmailField(null=False, blank=True)
+    advert_name: models.ForeignKey['Advert'] = models.ForeignKey(
         "ads.Advert", on_delete=models.SET_DEFAULT,
         default="without_adverting",
         related_name="leads")

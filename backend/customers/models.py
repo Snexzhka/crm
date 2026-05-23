@@ -17,8 +17,12 @@ class Customer(models.Model):
         contract:связь с контрактом
 
     """
-    lead = models.ForeignKey("leads.Lead", on_delete=models.DO_NOTHING, related_name="customers")
-    contract = models.ForeignKey(
+    lead: models.ForeignKey['Lead'] = models.ForeignKey(
+        "leads.Lead",
+        on_delete=models.DO_NOTHING,
+        related_name="customers"
+    )
+    contract: models.ForeignKey['Contract'] = models.ForeignKey(
         "contracts.Contract",
         on_delete=models.SET_DEFAULT,
         default="",

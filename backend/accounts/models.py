@@ -20,8 +20,8 @@ class Profile(models.Model):
         ordering = ["pk", "user"]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    job_title = models.CharField(max_length=200)
-    department = models.CharField(max_length=150)
+    job_title: models.CharField = models.CharField(max_length=200)
+    department: models.CharField = models.CharField(max_length=150)
 
     def __str__(self):
         return f"{self.user}  {self.job_title} {self.department}"
