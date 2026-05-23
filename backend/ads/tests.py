@@ -1,6 +1,7 @@
 """
 Тестирование с помощью TestCase
 """
+
 import os
 import shutil
 
@@ -16,14 +17,17 @@ from .models import Advert
 
 User = get_user_model()
 
+
 class AdvertModelTest(TestCase):
     """
     Класс проверки создания объектов модели рекламных компаний.
     """
+
     def test_model_ads(self):
         """
         Тест проверки создания объектов модели
         """
+
         self.product = Product.objects.create(
             name="testProd",
             description="qwerty",
@@ -47,12 +51,14 @@ class AdvertTestView(TestCase):
     """
     Класс проверки работы представлений рекламных компаний
     """
+
     @classmethod
     def setUpClass(cls):
         """
         Метод установки данных для тестов, отрабатывает один раз перед прогоном всех тестов,
         в самом начале.
         """
+
         super().setUpClass()
         cls.marketer = User.objects.create_user(
             username="Marketer",
@@ -75,17 +81,18 @@ class AdvertTestView(TestCase):
         Метод для удаления медиа файлов после прогона всех тестов. Запускается в конце, после
         отработки всех тестов.
         """
-        if hasattr(cls, '_overridden_settings') and cls._overridden_settings:
-            media_root = cls._overridden_settings.get('MEDIA_ROOT')
+
+        if hasattr(cls, "_overridden_settings") and cls._overridden_settings:
+            media_root = cls._overridden_settings.get("MEDIA_ROOT")
             if media_root and os.path.exists(media_root):
                 shutil.rmtree(media_root, ignore_errors=True)
         super().tearDownClass()
-
 
     def setUp(self):
         """
         Метод установки данных для тестов, данные устанавливаются заново перед каждым тестом
         """
+
         self.ads = Advert.objects.create(
             name="testAdvert",
             products=self.product,
@@ -100,13 +107,11 @@ class AdvertTestView(TestCase):
         """
         return self.client.login(username="Marketer", password="marketerPassword")
 
-
     def login_admin(self):
         """
         Метод для входа под админом
         """
         return self.client.login(username="Admin", password="adminPassword")
-
 
     def test_list_view(self):
         """
@@ -114,11 +119,11 @@ class AdvertTestView(TestCase):
         без авторизации. Возвращает код 302, проверяется перенаправление
         на страницу входа.
         """
+
         self.client.logout()
         response = self.client.get(reverse("ads:ads-list"))
         self.assertEqual(response.status_code, 302)
         self.assertIn(str(settings.LOGIN_URL), response.url)
-
 
     def test_list_view_marketer(self):
         """
@@ -126,18 +131,20 @@ class AdvertTestView(TestCase):
         авторизованным пользователем. Сначала возвращает код 403 (отсутствие прав), после
         наделения правами - код 200.
         """
+
         self.login_marketer()
         response = self.client.get(reverse("ads:ads-list"))
         self.assertEqual(response.status_code, 403)
 
         content_type = ContentType.objects.get_for_model(Advert)
-        permission = Permission.objects.get(content_type=content_type, codename='view_advert')
+        permission = Permission.objects.get(
+            content_type=content_type, codename="view_advert"
+        )
         self.marketer.user_permissions.add(permission)
 
         response = self.client.get(reverse("ads:ads-list"))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.ads.name, "testAdvert")
-
 
     def test_list_view_admin(self):
         """
@@ -150,7 +157,6 @@ class AdvertTestView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.ads.budget, 79)
 
-
     def test_detail_view(self):
         """
         Тест проверки невозможности неавторизованным пользователем
@@ -158,7 +164,9 @@ class AdvertTestView(TestCase):
         Возвращает код 302 (происходит перенаправление на страницу входа).
         """
         self.client.logout()
-        response = self.client.get(reverse("ads:ads-detail", kwargs={"pk":self.ads.pk}))
+        response = self.client.get(
+            reverse("ads:ads-detail", kwargs={"pk": self.ads.pk})
+        )
         self.assertEqual(response.status_code, 302)
         self.assertIn(str(settings.LOGIN_URL), response.url)
 
@@ -168,30 +176,36 @@ class AdvertTestView(TestCase):
         деталей рекламной компании. Сначала, при отсутствии прав просмотра,
         возвращает код 403, после наделения правами - 200.
         """
-        self.login_marketer()
-        response = self.client.get(reverse("ads:ads-detail", kwargs={"pk":self.ads.pk}))
-        self.assertEqual(response.status_code, 403)
 
+        self.login_marketer()
+        response = self.client.get(
+            reverse("ads:ads-detail", kwargs={"pk": self.ads.pk})
+        )
+        self.assertEqual(response.status_code, 403)
         content_type = ContentType.objects.get_for_model(Advert)
-        permission = Permission.objects.get(content_type=content_type, codename='view_advert')
+        permission = Permission.objects.get(
+            content_type=content_type, codename="view_advert"
+        )
         self.marketer.user_permissions.add(permission)
 
-        response = self.client.get(reverse("ads:ads-detail", kwargs={"pk": self.ads.pk}))
+        response = self.client.get(
+            reverse("ads:ads-detail", kwargs={"pk": self.ads.pk})
+        )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.ads.name, "testAdvert")
         self.assertContains(response, 79)
-
 
     def test_detail_admin(self):
         """
         Тест просмотра деталей рекламной компании админом. Возвращает код 200.
         """
         self.login_admin()
-        response = self.client.get(reverse("ads:ads-detail", kwargs={"pk": self.ads.pk}))
+        response = self.client.get(
+            reverse("ads:ads-detail", kwargs={"pk": self.ads.pk})
+        )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.ads.budget, 79)
         self.assertContains(response, "testAdvert")
-
 
     def test_create_ads(self):
         """
@@ -202,9 +216,9 @@ class AdvertTestView(TestCase):
         self.client.logout()
         data = {
             "name": "testAds",
-            "products":self.product.pk,
+            "products": self.product.pk,
             "promotion_path": "newspaper",
-            "budget":150.00,
+            "budget": 150.00,
         }
         response = self.client.post(reverse("ads:ads-create"), data=data)
         self.assertEqual(response.status_code, 302)
@@ -227,8 +241,12 @@ class AdvertTestView(TestCase):
         self.assertEqual(response.status_code, 403)
 
         content_type = ContentType.objects.get_for_model(Advert)
-        add_permission = Permission.objects.get(content_type=content_type, codename='add_advert')
-        view_permission = Permission.objects.get(content_type=content_type, codename='view_advert')
+        add_permission = Permission.objects.get(
+            content_type=content_type, codename="add_advert"
+        )
+        view_permission = Permission.objects.get(
+            content_type=content_type, codename="view_advert"
+        )
         self.marketer.user_permissions.add(add_permission, view_permission)
 
         response = self.client.post(reverse("ads:ads-create"), data=data)
@@ -238,7 +256,6 @@ class AdvertTestView(TestCase):
         self.assertEqual(Advert.objects.count(), 2)
         new_ads = Advert.objects.get(name="testAds")
         self.assertNotEqual(new_ads.promotion_path, "testAds")
-
 
     def test_create_admin(self):
         """
@@ -261,7 +278,6 @@ class AdvertTestView(TestCase):
         new_ads = Advert.objects.get(name="testAds")
         self.assertEqual(new_ads.promotion_path, "newspaper")
 
-
     def test_update_ads(self):
         """
         Тест невозможности обновления рекламной компании неавторизованным пользователем.
@@ -272,10 +288,12 @@ class AdvertTestView(TestCase):
             "name": "testAds2",
             "products": self.product.pk,
             "promotion_path": "news",
-            "budget": 100.00,}
+            "budget": 100.00,
+        }
 
-        response = self.client.post(reverse("ads:ads-update", kwargs={"pk":self.ads.pk}),
-                                    data=data)
+        response = self.client.post(
+            reverse("ads:ads-update", kwargs={"pk": self.ads.pk}), data=data
+        )
         self.assertEqual(response.status_code, 302)
         self.assertIn(str(settings.LOGIN_URL), response.url)
 
@@ -293,31 +311,32 @@ class AdvertTestView(TestCase):
             "budget": 100.00,
         }
 
-        response = self.client.post(reverse("ads:ads-update", kwargs={"pk": self.ads.pk}),
-                                    data=data)
+        response = self.client.post(
+            reverse("ads:ads-update", kwargs={"pk": self.ads.pk}), data=data
+        )
         self.assertEqual(response.status_code, 403)
 
         content_type = ContentType.objects.get_for_model(Advert)
         change_permission = Permission.objects.get(
-            content_type=content_type,
-            codename='change_advert'
+            content_type=content_type, codename="change_advert"
         )
         view_permission = Permission.objects.get(
-            content_type=content_type,
-            codename='view_advert'
+            content_type=content_type, codename="view_advert"
         )
         self.marketer.user_permissions.add(change_permission, view_permission)
 
-        response = self.client.post(reverse("ads:ads-update", kwargs={"pk": self.ads.pk}),
-                                    data=data)
+        response = self.client.post(
+            reverse("ads:ads-update", kwargs={"pk": self.ads.pk}), data=data
+        )
         self.ads.refresh_from_db()
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("ads:ads-detail", kwargs={"pk":self.ads.pk}))
+        self.assertRedirects(
+            response, reverse("ads:ads-detail", kwargs={"pk": self.ads.pk})
+        )
         self.assertTrue(Advert.objects.filter(name="testAds2").exists())
         update_ads = Advert.objects.get(pk=1)
         self.assertEqual(update_ads.name, "testAds2")
         self.assertEqual(update_ads.pk, 1)
-
 
     def test_update_admin(self):
         """
@@ -330,17 +349,20 @@ class AdvertTestView(TestCase):
             "name": "testAds3",
             "products": self.product.pk,
             "promotion_path": "news",
-            "budget": 100, }
+            "budget": 100,
+        }
 
-        response = self.client.post(reverse("ads:ads-update", kwargs={"pk": self.ads.pk}),
-                                    data=data)
+        response = self.client.post(
+            reverse("ads:ads-update", kwargs={"pk": self.ads.pk}), data=data
+        )
         self.assertEqual(response.status_code, 302)
         self.ads.refresh_from_db()
-        self.assertRedirects(response, reverse("ads:ads-detail", kwargs={"pk": self.ads.pk}))
+        self.assertRedirects(
+            response, reverse("ads:ads-detail", kwargs={"pk": self.ads.pk})
+        )
         self.assertTrue(Advert.objects.filter(name="testAds3").exists())
         update_ads = Advert.objects.get(pk=1)
         self.assertEqual(update_ads.promotion_path, "news")
-
 
     def test_delete_ads(self):
         """
@@ -348,9 +370,10 @@ class AdvertTestView(TestCase):
         Возвращает код 403.
         """
         self.client.logout()
-        response = self.client.post(reverse("ads:ads_delete", kwargs={"pk":self.ads.pk}))
+        response = self.client.post(
+            reverse("ads:ads_delete", kwargs={"pk": self.ads.pk})
+        )
         self.assertEqual(response.status_code, 403)
-
 
     def test_delete_marketer(self):
         """
@@ -359,23 +382,24 @@ class AdvertTestView(TestCase):
         удалить может только админ.
         """
         self.login_marketer()
-        response = self.client.post(reverse(
-            "ads:ads_delete",
-            kwargs={"pk": self.ads.pk})
+        response = self.client.post(
+            reverse("ads:ads_delete", kwargs={"pk": self.ads.pk})
         )
         self.assertEqual(response.status_code, 403)
 
         content_type = ContentType.objects.get_for_model(Advert)
         delete_permission = Permission.objects.get(
-            content_type=content_type,
-            codename='delete_advert'
+            content_type=content_type, codename="delete_advert"
         )
-        view_permission = Permission.objects.get(content_type=content_type, codename='view_advert')
+        view_permission = Permission.objects.get(
+            content_type=content_type, codename="view_advert"
+        )
         self.marketer.user_permissions.add(delete_permission, view_permission)
 
-        response = self.client.post(reverse("ads:ads_delete", kwargs={"pk": self.ads.pk}))
+        response = self.client.post(
+            reverse("ads:ads_delete", kwargs={"pk": self.ads.pk})
+        )
         self.assertEqual(response.status_code, 403)
-
 
     def test_delete_admin(self):
         """
@@ -383,7 +407,9 @@ class AdvertTestView(TestCase):
         перенаправлением на список рекламных компаний.
         """
         self.login_admin()
-        response = self.client.post(reverse("ads:ads_delete", kwargs={"pk": self.ads.pk}))
+        response = self.client.post(
+            reverse("ads:ads_delete", kwargs={"pk": self.ads.pk})
+        )
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("ads:ads-list"))
         self.assertFalse(Advert.objects.filter(name="testAdvert").exists())

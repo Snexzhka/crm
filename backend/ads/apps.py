@@ -1,11 +1,13 @@
 """
 Конфигурация для приложения ads
 """
+
 from django.apps import AppConfig
 
 
 class AdsConfig(AppConfig):
     """
+
     Конфигурация для приложения 'ads'.
 
     Атрибуты:
@@ -15,5 +17,5 @@ class AdsConfig(AppConfig):
         verbose_name: отображаемое имя в админке (на русском).
     """
 
-    name = 'ads'
+    name = "ads"
     verbose_name = "Рекламные компании"

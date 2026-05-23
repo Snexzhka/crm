@@ -1,6 +1,7 @@
 """
 Тестирование приложения на основе pytest
 """
+
 import pytest
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
@@ -29,12 +30,15 @@ def test_view_by_user(user, auth_user, ads):
     :param ads: fixture
     :return: 200
     """
+
     url = reverse("ads:ads-list")
     response = auth_user.get(url)
     assert response.status_code == 403
 
     content_type = ContentType.objects.get_for_model(Advert)
-    permission = Permission.objects.get(content_type=content_type, codename='view_advert')
+    permission = Permission.objects.get(
+        content_type=content_type, codename="view_advert"
+    )
     user.user_permissions.add(permission)
 
     response = auth_user.get(url)
@@ -52,6 +56,7 @@ def test_view_by_admin(auth_admin):
     :param ads: fixture
     :return: 200
     """
+
     url = reverse("ads:ads-list")
     response = auth_admin.get(url)
     assert response.status_code == 200
@@ -67,13 +72,15 @@ def test_view(client):
     :param ads: fixture
     :return: 302
     """
+
     url = reverse("ads:ads-list")
     response = client.get(url)
     assert response.status_code == 302
     assert "login" in response.url
 
+
 @pytest.mark.django_db
-def test_view_detail(client,  ads):
+def test_view_detail(client, ads):
     """
     Тест проверки невозможности просмотра деталей рекламы неавторизованным пользователем.
     Возвращает код 302 и направляет на страницу входа.
@@ -81,7 +88,8 @@ def test_view_detail(client,  ads):
     :param ads: fixture
     :return: 302
     """
-    url = reverse("ads:ads-detail", kwargs={"pk":ads.pk})
+
+    url = reverse("ads:ads-detail", kwargs={"pk": ads.pk})
     response = client.get(url)
     assert response.status_code == 302
     assert "login" in response.url
@@ -97,12 +105,15 @@ def test_detail_by_user(auth_user, ads, user):
     :param ads: fixture
     :return: 200
     """
+
     url = reverse("ads:ads-detail", kwargs={"pk": ads.pk})
     response = auth_user.get(url)
     assert response.status_code == 403
 
     content_type = ContentType.objects.get_for_model(Advert)
-    view_permission = Permission.objects.get(content_type=content_type, codename='view_advert')
+    view_permission = Permission.objects.get(
+        content_type=content_type, codename="view_advert"
+    )
     user.user_permissions.add(view_permission)
 
     response = auth_user.get(url)
@@ -120,6 +131,7 @@ def test_detail_by_admin(auth_admin, ads):
     :param ads: fixture
     :return: 200
     """
+
     url = reverse("ads:ads-detail", kwargs={"pk": ads.pk})
     response = auth_admin.get(url)
     assert response.status_code == 200
@@ -136,11 +148,12 @@ def test_create_ads(client, product):
     :param product:  fixture
     :return: 302
     """
+
     data = {
         "name": "Advert_new",
         "budget": 22,
         "promotion_path": "news",
-        "products":product,
+        "products": product,
     }
     url = reverse("ads:ads-create")
     response = client.post(url, data)
@@ -158,6 +171,7 @@ def test_create_by_user(auth_user, product, user):
     :param product:  fixture
     :return: 302
     """
+
     data = {
         "name": "Advert_new",
         "budget": 22,
@@ -170,8 +184,12 @@ def test_create_by_user(auth_user, product, user):
     assert response.status_code == 403
 
     content_type = ContentType.objects.get_for_model(Advert)
-    view_permission = Permission.objects.get(content_type=content_type, codename='view_advert')
-    add_permission = Permission.objects.get(content_type=content_type, codename='add_advert')
+    view_permission = Permission.objects.get(
+        content_type=content_type, codename="view_advert"
+    )
+    add_permission = Permission.objects.get(
+        content_type=content_type, codename="add_advert"
+    )
     user.user_permissions.add(view_permission, add_permission)
 
     response = auth_user.post(url, data)
@@ -189,6 +207,7 @@ def test_create_by_admin(auth_admin, product):
     :param product:  fixture
     :return: 302
     """
+
     data = {
         "name": "Advert_new",
         "budget": 22,
@@ -213,13 +232,14 @@ def test_update_advert(client, product, ads):
     :param product:  fixture
     :return: 302
     """
+
     data = {
         "name": "Advert_update",
         "budget": 122,
         "promotion_path": "news_news",
         "products": product.pk,
     }
-    url = reverse("ads:ads-update", kwargs={"pk":ads.pk})
+    url = reverse("ads:ads-update", kwargs={"pk": ads.pk})
     response = client.post(url, data)
     assert response.status_code == 302
     assert "login" in response.url
@@ -236,6 +256,7 @@ def test_update_by_user(auth_user, user, product, ads):
     :param product:  fixture
     :return: 302
     """
+
     data = {
         "name": "Advert_update",
         "budget": 122,
@@ -247,8 +268,12 @@ def test_update_by_user(auth_user, user, product, ads):
     assert response.status_code == 403
 
     content_type = ContentType.objects.get_for_model(Advert)
-    view_permission = Permission.objects.get(content_type=content_type, codename='view_advert')
-    change_permission = Permission.objects.get(content_type=content_type, codename='change_advert')
+    view_permission = Permission.objects.get(
+        content_type=content_type, codename="view_advert"
+    )
+    change_permission = Permission.objects.get(
+        content_type=content_type, codename="change_advert"
+    )
     user.user_permissions.add(view_permission, change_permission)
 
     response = auth_user.post(url, data)
@@ -268,6 +293,7 @@ def test_update_by_admin(auth_admin, product, ads):
     :param product:  fixture
     :return: 302
     """
+
     data = {
         "name": "Advert_update",
         "budget": 122,
@@ -292,7 +318,8 @@ def test_delete_ads(client, ads):
     :param ads:  fixture
     :return: 403
     """
-    url = reverse("ads:ads_delete", kwargs={"pk":ads.pk})
+
+    url = reverse("ads:ads_delete", kwargs={"pk": ads.pk})
     response = client.post(url)
     assert response.status_code == 403
 
@@ -306,13 +333,18 @@ def test_delete_by_user(auth_user, user, ads):
     :param ads:  fixture
     :return: 403
     """
-    url = reverse("ads:ads_delete", kwargs={"pk":ads.pk})
+
+    url = reverse("ads:ads_delete", kwargs={"pk": ads.pk})
     response = auth_user.post(url)
     assert response.status_code == 403
 
     content_type = ContentType.objects.get_for_model(Advert)
-    view_permission = Permission.objects.get(content_type=content_type, codename='view_advert')
-    delete_permission = Permission.objects.get(content_type=content_type, codename='delete_advert')
+    view_permission = Permission.objects.get(
+        content_type=content_type, codename="view_advert"
+    )
+    delete_permission = Permission.objects.get(
+        content_type=content_type, codename="delete_advert"
+    )
     user.user_permissions.add(view_permission, delete_permission)
 
     response = auth_user.post(url)
@@ -320,7 +352,7 @@ def test_delete_by_user(auth_user, user, ads):
 
 
 @pytest.mark.django_db
-def test_delete_admin(auth_admin,  ads):
+def test_delete_admin(auth_admin, ads):
     """
     Тест проверки возможности удаления рекламной компании администратором.
     Возвращает код 302, удаляет рекламную компанию и направляет на страницу списка рекламы.
@@ -328,7 +360,8 @@ def test_delete_admin(auth_admin,  ads):
     :param ads:  fixture
     :return: 302
     """
-    url = reverse("ads:ads_delete", kwargs={"pk":ads.pk})
+
+    url = reverse("ads:ads_delete", kwargs={"pk": ads.pk})
     response = auth_admin.post(url)
     assert response.status_code == 302
-    assert not  Advert.objects.filter(name="TestAdvert").exists()
+    assert not Advert.objects.filter(name="TestAdvert").exists()

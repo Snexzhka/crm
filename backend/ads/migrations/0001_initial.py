@@ -2,6 +2,7 @@
 """
 Миграция для инициализации модели рекламной компании в базе данных
 """
+
 import django.db.models.deletion
 from django.db import migrations, models
 
@@ -15,21 +16,21 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('products', '0001_initial'),
+        ("products", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Advert',
+            name="Advert",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=250)),
-                ('promotion_path', models.CharField(max_length=250)),
-                ('price', models.DecimalField(decimal_places=2, default=0, max_digits=8)),
-                ('products', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='products.product')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=250)),
+                ("promotion_path", models.CharField(max_length=250)),
+                ("price", models.DecimalField(decimal_places=2, default=0, max_digits=8)),
+                ("products", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="products.product")),
             ],
             options={
-                'ordering': ['pk', 'name'],
+                "ordering": ["pk", "name"],
             },
         ),
     ]

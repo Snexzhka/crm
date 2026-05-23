@@ -1,6 +1,7 @@
 """
 Подключение путей (ссылок) для работы приложения
 """
+
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 
@@ -13,7 +14,7 @@ from .views import (
     AdStatisticsView,
 )
 
-app_name =  "ads"
+app_name = "ads"
 
 routers = DefaultRouter()
 
