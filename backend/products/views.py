@@ -3,21 +3,21 @@
 просмотра списка и деталей услуг
 """
 
-from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import (
     PermissionRequiredMixin,
     UserPassesTestMixin,
 )
+from django.urls import reverse, reverse_lazy
 from django.views.generic import (
-    ListView,
-    DetailView,
     CreateView,
-    UpdateView,
     DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
 )
 
-from .models import Product
 from .forms import ProductForm
+from .models import Product
 
 
 class ProductListView(PermissionRequiredMixin, ListView):
