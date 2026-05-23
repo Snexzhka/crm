@@ -2,6 +2,7 @@
 """
 Миграция для изменения названия поля в модели рекламных услуг
 """
+
 from django.db import migrations
 
 
@@ -11,13 +12,13 @@ class Migration(migrations.Migration):
     """
 
     dependencies = [
-        ('ads', '0001_initial'),
+        ("ads", "0001_initial"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='advert',
-            old_name='price',
-            new_name='budget',
+            model_name="advert",
+            old_name="price",
+            new_name="budget",
         ),
     ]
