@@ -1,17 +1,20 @@
 import datetime
 
 import pytest
-from django.contrib.auth.models import User
-from django.test import Client
-from pytest_django.fixtures import client
+from django.contrib.auth import get_user_model
+#from pytest_django.fixtures import client
 
-from products.models import Product
-from leads.models import Lead
 from ads.models import Advert
-from tasks.models import Task
 from contracts.models import Contract
 from customers.models import Customer
+from leads.models import Lead
+from products.models import Product
+from tasks.models import Task
 
+
+User = get_user_model()
+
+# pylint: disable=redefined-outer-name
 
 @pytest.fixture
 def user(db):
