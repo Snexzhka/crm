@@ -2,6 +2,7 @@
 Представление для услуг. Реализует методы создания, обновления и удаления услуг,
 просмотра списка и деталей услуг
 """
+
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import (
     PermissionRequiredMixin,
@@ -18,22 +19,26 @@ from django.views.generic import (
 from .models import Product
 from .forms import ProductForm
 
+
 class ProductListView(PermissionRequiredMixin, ListView):
     """
     Представление для получения списка услуг. Требуется разрешение на просмотр
     или права админа.
     """
+
     permission_required = "products.view_product"
     template_name = "products/products-list.html"
-    #model = Product
+    # model = Product
     queryset = Product.objects.all()
     context_object_name = "products"
+
 
 class ProductDetailView(PermissionRequiredMixin, DetailView):
     """
     Представление для просмотра деталей услуги. Требуется разрешение на просмотр
     или права админа.
     """
+
     permission_required = "products.view_product"
     template_name = "products/products-detail.html"
     queryset = Product.objects.all()
@@ -45,6 +50,7 @@ class ProductCreateView(PermissionRequiredMixin, CreateView):
     Представление для создания услуги. Требуется разрешение на создание
     или права админа.
     """
+
     permission_required = "products.add_product"
     model = Product
     success_url = reverse_lazy("products:product-list")
@@ -63,6 +69,7 @@ class ProductUpdateView(PermissionRequiredMixin, UpdateView):
     Представление для обновления услуги. Требуется разрешение на обновление
     или права админа.
     """
+
     permission_required = "products.change_product"
     model = Product
     fields = "name", "description", "cost"
@@ -71,10 +78,12 @@ class ProductUpdateView(PermissionRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse("products:product-detail", kwargs={"pk": self.object.pk})
 
+
 class ProductDeleteView(UserPassesTestMixin, DeleteView):
     """
     Представление для удаления услуги. Требуются права админа.
     """
+
     def test_func(self):
         return self.request.user.is_superuser
 
