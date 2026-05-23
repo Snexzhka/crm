@@ -1,15 +1,17 @@
-from datetime import datetime, timedelta
-
+"""
+Тестирование на основе pytest
+"""
+from datetime import timedelta
 import pytest
+
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 
-from .models import Customer
-from leads.models import Lead
 from contracts.models import Contract
-from products.models import Product
-from ads.models import Advert
+from leads.models import Lead
+from .models import Customer
+
 
 @pytest.mark.django_db
 def test_model_customer(customer, lead, contract):
@@ -80,8 +82,9 @@ def test_detail_customer(client, customer):
 def test_detail_by_user(auth_user, customer, user):
     """
     Тест проверки возможности просмотра деталей клиентов авторизованным пользователем
-    :param client: fixture
+    :param auth_user: fixture
     :param customer: fixture
+     :param user: fixture
     :return: 200
     """
     url = reverse("customers:customers-detail", kwargs={"pk":customer.pk})
@@ -97,10 +100,10 @@ def test_detail_by_user(auth_user, customer, user):
 
 
 @pytest.mark.django_db
-def test_detail_by_admin(auth_admin, customer, user):
+def test_detail_by_admin(auth_admin, customer):
     """
     Тест проверки возможности просмотра деталей клиентов администратором
-    :param client: fixture
+    :param auth_admin: fixture
     :param customer: fixture
     :return: 200
     """
@@ -110,14 +113,12 @@ def test_detail_by_admin(auth_admin, customer, user):
 
 
 @pytest.mark.django_db
-def test_create_customer(client, customer, lead, contract, ads, product):
+def test_create_customer(client, lead, ads, product):
     """
     Тест невозможности создания клиента неавторизованным пользователем.
     Возвращает на страницу входа
     :param client: fixture
-    :param customer: fixture
     :param lead: fixture
-    :param contract: fixture
     :param ads: fixture
     :param product: fixture
     :return: 302
@@ -149,15 +150,14 @@ def test_create_customer(client, customer, lead, contract, ads, product):
 
 
 @pytest.mark.django_db
-def test_create_by_user(auth_user, user, customer, lead, contract, ads, product):
+def test_create_by_user(auth_user, user, lead, ads, product):
     """
     Тест возможности создания клиента авторизованным пользователем при предоставлении доп.прав.
-    :param client: fixture
-    :param customer: fixture
+    :param auth_user: fixture
     :param lead: fixture
-    :param contract: fixture
     :param ads: fixture
     :param product: fixture
+    :param user: fixture
     :return: 302
     """
     new_lead = Lead.objects.create(
@@ -196,13 +196,11 @@ def test_create_by_user(auth_user, user, customer, lead, contract, ads, product)
 
 
 @pytest.mark.django_db
-def test_create_by_admin(auth_admin, customer, lead, contract, ads, product):
+def test_create_by_admin(auth_admin, lead, ads, product):
     """
     Тест возможности создания клиента авторизованным пользователем без предоставления доп.прав.
-    :param client: fixture
-    :param customer: fixture
+    :param auth_admin: fixture
     :param lead: fixture
-    :param contract: fixture
     :param ads: fixture
     :param product: fixture
     :return: 302
@@ -235,15 +233,14 @@ def test_create_by_admin(auth_admin, customer, lead, contract, ads, product):
 
 
 @pytest.mark.django_db
-def test_update_customer(client, customer, lead, contract, ads, product):
+def test_update_customer(client, customer, lead, ads, product):
     """
     Тест невозможности обновления  клиентов неавторизованным пользователем.
     Возвращает 302 и перенаправляет на страницу входа.
     :param client: fixture
     :param customer: fixture
     :param lead: fixture
-    :param contract: fixture
-    :param ads: fixtureн
+    :param ads: fixture
     :param product: fixture
     :return: 302
     """
@@ -274,16 +271,16 @@ def test_update_customer(client, customer, lead, contract, ads, product):
 
 
 @pytest.mark.django_db
-def test_update_by_user(auth_user, user, customer, lead, contract, ads, product):
+def test_update_by_user(auth_user, user, customer, lead, ads, product):
     """
     Тест возможности обновления клиентов авторизованным пользователем. После получения разрешений
     создает нового клиента и возвращает 302 с перенаправлением на список клиентов.
-    :param client: fixture
+    :param auth_user: fixture
     :param customer: fixture
     :param lead: fixture
-    :param contract: fixture
-    :param ads: fixtureн
+    :param ads: fixture
     :param product: fixture
+    :param user: fixture
     :return: 302
     """
     new_lead = Lead.objects.create(
@@ -311,7 +308,10 @@ def test_update_by_user(auth_user, user, customer, lead, contract, ads, product)
     assert response.status_code == 403
 
     content_type = ContentType.objects.get_for_model(Customer)
-    change_permission = Permission.objects.get(content_type=content_type, codename='change_customer')
+    change_permission = Permission.objects.get(
+        content_type=content_type,
+        codename='change_customer'
+    )
     view_permission = Permission.objects.get(content_type=content_type, codename='view_customer')
     user.user_permissions.add(view_permission, change_permission)
 
@@ -323,14 +323,13 @@ def test_update_by_user(auth_user, user, customer, lead, contract, ads, product)
 
 
 @pytest.mark.django_db
-def test_update_by_admin(auth_admin, customer, lead, contract, ads, product):
+def test_update_by_admin(auth_admin, customer, lead, ads, product):
     """
     Тест возможности обновления клиентов администратором.
     Создает нового клиента и возвращает 302 с перенаправлением на список клиентов.
-    :param client: fixture
+    :param auth_admin: fixture
     :param customer: fixture
     :param lead: fixture
-    :param contract: fixture
     :param ads: fixtureн
     :param product: fixture
     :return: 302
@@ -364,16 +363,12 @@ def test_update_by_admin(auth_admin, customer, lead, contract, ads, product):
 
 
 @pytest.mark.django_db
-def test_delete_customer(client, customer, lead, contract, ads, product):
+def test_delete_customer(client, customer):
     """
     Тест проверки невозможности удаления клиента неавторизованным пользователем.
-    Возвращает код 302 и направляет на страницу входа
+    Возвращает код 302 и направляет на страницу входа.
     ::param client: fixture
     :param customer: fixture
-    :param lead: fixture
-    :param contract: fixture
-    :param ads: fixture
-    :param product: fixture
     :return: 302
     """
     url = reverse("customers:customer-delete", kwargs={"pk":customer.pk})
@@ -383,16 +378,14 @@ def test_delete_customer(client, customer, lead, contract, ads, product):
 
 
 @pytest.mark.django_db
-def test_delete_by_user(auth_user, user, customer, lead, contract, ads, product):
+def test_delete_by_user(auth_user, user, customer):
     """
-    Тест проверки возможности удаления клиента авторизованным пользователем. После получения разрешений
-    удаление невозможно по причине ограничений на удаление.
-    ::param client: fixture
+    Тест проверки возможности удаления клиента авторизованным пользователем.
+    После получения разрешений удаление невозможно по причине ограничений
+    на удаление.
+    ::param auth_user: fixture
     :param customer: fixture
-    :param lead: fixture
-    :param contract: fixture
-    :param ads: fixtureн
-    :param product: fixture
+    :param user: fixture
     :return: 302
     """
     url = reverse("customers:customer-delete", kwargs={"pk":customer.pk})
@@ -400,7 +393,10 @@ def test_delete_by_user(auth_user, user, customer, lead, contract, ads, product)
     assert response.status_code == 403
 
     content_type = ContentType.objects.get_for_model(Customer)
-    delete_permission = Permission.objects.get(content_type=content_type, codename='delete_customer')
+    delete_permission = Permission.objects.get(
+        content_type=content_type,
+        codename='delete_customer'
+    )
     view_permission = Permission.objects.get(content_type=content_type, codename='view_customer')
     user.user_permissions.add(view_permission, delete_permission)
 
@@ -409,16 +405,14 @@ def test_delete_by_user(auth_user, user, customer, lead, contract, ads, product)
 
 
 @pytest.mark.django_db
-def test_delete_by_admin(auth_admin, customer, lead, contract, ads, product):
+def test_delete_by_admin(auth_admin, customer, lead, contract):
     """
     Тест проверки возможности удаления клиента админом. Удаляет клиента и
     возвращает на страницу деталей клиента.
-    ::param client: fixture
+    :param auth_admin: fixture
     :param customer: fixture
     :param lead: fixture
     :param contract: fixture
-    :param ads: fixture
-    :param product: fixture
     :return: 302
     """
     url = reverse("customers:customer-delete", kwargs={"pk":customer.pk})

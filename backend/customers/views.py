@@ -1,4 +1,8 @@
-from django.shortcuts import render
+"""
+Представления для отображения списка и просмотра деталей
+активных клиентов, создания, удаления и обновления
+клиентов
+"""
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import (
     PermissionRequiredMixin,

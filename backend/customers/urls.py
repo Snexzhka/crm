@@ -1,5 +1,7 @@
-from django.contrib import admin
-from django.urls import path, include
+"""
+Подключение ссылок для работы приложения
+"""
+from django.urls import path
 
 from .views import (
     CustomerListView,

@@ -1,16 +1,31 @@
+"""
+Модель для приложения активных клиентов
+"""
 from django.db import models
 
-
+from leads.models import Lead
+from contracts.models import Contract
 
 
 class Customer(models.Model):
+    """
+    Модель для активных клиентов.
+    Использует связи с приложениями потенциальных клиентов
+    и контрактов.
+    Поля:
+        lead:связь с активным клиентом
+        contract:связь с контрактом
+
+    """
     lead = models.ForeignKey("leads.Lead", on_delete=models.DO_NOTHING, related_name="customers")
-    contract = models.ForeignKey("contracts.Contract", on_delete=models.SET_DEFAULT, default="", related_name="customers")
+    contract = models.ForeignKey(
+        "contracts.Contract",
+        on_delete=models.SET_DEFAULT,
+        default="",
+        related_name="customers"
+    )
 
     def get_profile(self):
-        from contracts.models import Contract
-        from leads.models import Lead
-
         profiles = Lead.objects.filter(profile=self)
         contracts = Contract.objects.filter(contract=self)
         return [{"name":p.first_name, "lastname": p.last_name if p.last_name else "",
@@ -21,4 +36,5 @@ class Customer(models.Model):
 
 
     def __str__(self):
-        return f"{self.lead.first_name} {self.lead.last_name}-{self.contract.name}{self.contract.start_date}"
+        return (f"{self.lead.first_name} {self.lead.last_name}-"
+                f"{self.contract.name}{self.contract.start_date}")

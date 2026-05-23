@@ -1,19 +1,24 @@
+"""
+Тесты на основе TestCase
+"""
 import os
 import shutil
 from datetime import timedelta
 
 from django.conf import settings
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase, Client
 from django.urls import reverse
 
-from .models import Customer
-from products.models import Product
+from ads.models import Advert
 from contracts.models import Contract
 from leads.models import Lead
-from ads.models import Advert
+from products.models import Product
+from .models import Customer
 
+User = get_user_model()
 
 class CustomerModelGTest(TestCase):
     """
@@ -199,7 +204,10 @@ class CustomerViewTest(TestCase):
         страницу входа.
         """
         self.client.logout()
-        response = self.client.get(reverse("customers:customers-detail", kwargs={"pk":self.customer.pk}))
+        response = self.client.get(reverse(
+            "customers:customers-detail",
+            kwargs={"pk":self.customer.pk})
+        )
         self.assertEqual(response.status_code, 302)
         self.assertIn(str(settings.LOGIN_URL), response.url)
 
@@ -210,14 +218,20 @@ class CustomerViewTest(TestCase):
         правами - 200.
         """
         self.login_operator()
-        response = self.client.get(reverse("customers:customers-detail", kwargs={"pk": self.customer.pk}))
+        response = self.client.get(reverse(
+            "customers:customers-detail",
+            kwargs={"pk": self.customer.pk})
+        )
         self.assertEqual(response.status_code, 403)
 
         content_type = ContentType.objects.get_for_model(Customer)
         permission = Permission.objects.get(content_type=content_type, codename='view_customer')
         self.operator.user_permissions.add(permission)
 
-        response = self.client.get(reverse("customers:customers-detail", kwargs={"pk": self.customer.pk}))
+        response = self.client.get(reverse(
+            "customers:customers-detail",
+            kwargs={"pk": self.customer.pk})
+        )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.customer.contract.name, "TestContract")
 
@@ -227,7 +241,10 @@ class CustomerViewTest(TestCase):
         администратором. Возвращает код 200.
         """
         self.login_admin()
-        response = self.client.get(reverse("customers:customers-detail", kwargs={"pk": self.customer.pk}))
+        response = self.client.get(reverse(
+            "customers:customers-detail",
+            kwargs={"pk": self.customer.pk})
+        )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.customer.contract.name, "TestContract")
 
@@ -280,7 +297,12 @@ class CustomerViewTest(TestCase):
         cont_permission = Permission.objects.get(content_type=contract_ct, codename='add_contract')
         lead_ct = ContentType.objects.get_for_model(Lead)
         lead_permission = Permission.objects.get(content_type=lead_ct, codename='add_lead')
-        self.operator.user_permissions.add(prod_permission, ads_permission, cont_permission, lead_permission)
+        self.operator.user_permissions.add(
+            prod_permission,
+            ads_permission,
+            cont_permission,
+            lead_permission
+        )
 
         data = {
             "lead": self.lead.pk,
@@ -292,7 +314,10 @@ class CustomerViewTest(TestCase):
 
         content_type = ContentType.objects.get_for_model(Customer)
         add_permission = Permission.objects.get(content_type=content_type, codename='add_customer')
-        view_permission = Permission.objects.get(content_type=content_type, codename='view_customer')
+        view_permission = Permission.objects.get(
+            content_type=content_type,
+            codename='view_customer'
+        )
         self.operator.user_permissions.add(view_permission, add_permission)
 
         response = self.client.post(reverse("customers:customers-create"), data=data)
@@ -336,8 +361,11 @@ class CustomerViewTest(TestCase):
             "lead": self.lead.pk,
             "contract": self.contract.pk,
         }
-        response = self.client.post(reverse("customers:customer_update", kwargs={"pk":self.customer.pk}),
-                                    data=data)
+        response = self.client.post(reverse(
+            "customers:customer_update",
+            kwargs={"pk":self.customer.pk}),
+            data=data
+        )
         self.assertEqual(response.status_code, 302)
         self.assertIn(str(settings.LOGIN_URL), response.url)
 
@@ -357,25 +385,45 @@ class CustomerViewTest(TestCase):
         cont_permission = Permission.objects.get(content_type=contract_ct, codename='add_contract')
         lead_ct = ContentType.objects.get_for_model(Lead)
         lead_permission = Permission.objects.get(content_type=lead_ct, codename='add_lead')
-        self.operator.user_permissions.add(prod_permission, ads_permission, cont_permission, lead_permission)
+        self.operator.user_permissions.add(
+            prod_permission,
+            ads_permission,
+            cont_permission,
+            lead_permission
+        )
 
         data = {
             "lead": self.lead.pk,
             "contract": self.contract.pk,
         }
-        response = self.client.post(reverse("customers:customer_update", kwargs={"pk": self.customer.pk}),
-                                    data=data)
+        response = self.client.post(reverse(
+            "customers:customer_update",
+            kwargs={"pk": self.customer.pk}),
+            data=data
+        )
         self.assertEqual(response.status_code, 403)
 
         content_type = ContentType.objects.get_for_model(Customer)
-        change_permission = Permission.objects.get(content_type=content_type, codename='change_customer')
-        view_permission = Permission.objects.get(content_type=content_type, codename='view_customer')
+        change_permission = Permission.objects.get(
+            content_type=content_type,
+            codename='change_customer'
+        )
+        view_permission = Permission.objects.get(
+            content_type=content_type,
+            codename='view_customer'
+        )
         self.operator.user_permissions.add(view_permission, change_permission)
 
-        response = self.client.post(reverse("customers:customer_update", kwargs={"pk": self.customer.pk}),
-                                    data=data)
+        response = self.client.post(reverse(
+            "customers:customer_update",
+            kwargs={"pk": self.customer.pk}),
+            data=data
+        )
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("customers:customers-detail", kwargs={"pk": self.customer.pk}))
+        self.assertRedirects(response, reverse(
+            "customers:customers-detail",
+            kwargs={"pk": self.customer.pk})
+        )
 
         upd_cust = Customer.objects.last()
         self.assertEqual(upd_cust.lead, self.lead)
@@ -392,10 +440,16 @@ class CustomerViewTest(TestCase):
             "lead": self.lead.pk,
             "contract": self.contract.pk,
         }
-        response = self.client.post(reverse("customers:customer_update", kwargs={"pk": self.customer.pk}),
-                                    data=data)
+        response = self.client.post(reverse(
+            "customers:customer_update",
+            kwargs={"pk": self.customer.pk}),
+            data=data
+        )
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("customers:customers-detail", kwargs={"pk": self.customer.pk}))
+        self.assertRedirects(response, reverse(
+            "customers:customers-detail",
+            kwargs={"pk": self.customer.pk})
+                             )
 
         upd_cust = Customer.objects.last()
         self.assertEqual(upd_cust.lead, self.lead)
@@ -408,7 +462,10 @@ class CustomerViewTest(TestCase):
         страницу входа.
         """
         self.client.logout()
-        response = self.client.post(reverse("customers:customer-delete", kwargs={"pk": self.customer.pk}))
+        response = self.client.post(reverse(
+            "customers:customer-delete",
+            kwargs={"pk": self.customer.pk})
+        )
         self.assertEqual(response.status_code, 302)
         self.assertIn(str(settings.LOGIN_URL), response.url)
 
@@ -420,7 +477,10 @@ class CustomerViewTest(TestCase):
         удаление разрешено только администратору.
         """
         self.login_operator()
-        response = self.client.post(reverse("customers:customer-delete", kwargs={"pk": self.customer.pk}))
+        response = self.client.post(reverse(
+            "customers:customer-delete",
+            kwargs={"pk": self.customer.pk})
+        )
         self.assertEqual(response.status_code, 403)
 
         product_ct = ContentType.objects.get_for_model(Product)
@@ -431,14 +491,28 @@ class CustomerViewTest(TestCase):
         cont_permission = Permission.objects.get(content_type=contract_ct, codename='add_contract')
         lead_ct = ContentType.objects.get_for_model(Lead)
         lead_permission = Permission.objects.get(content_type=lead_ct, codename='add_lead')
-        self.operator.user_permissions.add(prod_permission, ads_permission, cont_permission, lead_permission)
+        self.operator.user_permissions.add(
+            prod_permission,
+            ads_permission,
+            cont_permission,
+            lead_permission
+        )
 
         content_type = ContentType.objects.get_for_model(Customer)
-        delete_permission = Permission.objects.get(content_type=content_type, codename='delete_customer')
-        view_permission = Permission.objects.get(content_type=content_type, codename='view_customer')
+        delete_permission = Permission.objects.get(
+            content_type=content_type,
+            codename='delete_customer'
+        )
+        view_permission = Permission.objects.get(
+            content_type=content_type,
+            codename='view_customer'
+        )
         self.operator.user_permissions.add(view_permission, delete_permission)
 
-        response = self.client.post(reverse("customers:customer-delete", kwargs={"pk": self.customer.pk}))
+        response = self.client.post(reverse(
+            "customers:customer-delete",
+            kwargs={"pk": self.customer.pk})
+        )
         self.assertEqual(response.status_code, 403)
 
 
@@ -448,6 +522,9 @@ class CustomerViewTest(TestCase):
         Возвращает код - 302 и перенаправляет на страницу списка клиентов.
         """
         self.login_admin()
-        response = self.client.post(reverse("customers:customer-delete", kwargs={"pk": self.customer.pk}))
+        response = self.client.post(reverse(
+            "customers:customer-delete",
+            kwargs={"pk": self.customer.pk})
+        )
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("customers:customers-list"))

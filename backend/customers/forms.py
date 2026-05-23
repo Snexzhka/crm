@@ -1,3 +1,8 @@
+"""
+Формы для приложения 'customers'.
+
+Содержит форму для отображения полей
+"""
 from django import forms
 
 from .models import Customer
