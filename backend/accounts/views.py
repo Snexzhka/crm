@@ -2,10 +2,11 @@
 Представление, используеемое для ркгистрации в приложении,
 входа/выхода
 """
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpRequest
-from django.shortcuts import  redirect
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views import View
 from django.shortcuts import render
@@ -19,11 +20,13 @@ from products.models import Product
 from tasks.models import Task
 from .models import Profile
 
+
 @login_required
 def home_page(request: HttpRequest):
     """
     Функция для отражения главной страницы
     """
+
     context = {
         "products_count": Product.objects.count(),
         "ads_count": Advert.objects.count(),
@@ -38,17 +41,21 @@ class LogoutPage(View):
     """
     Представление для выхода из аккаунта
     """
+
     def get(self, request: HttpRequest):
         """
         Метод для выхода из аккаунта
         """
+
         logout(request)
-        return redirect('accounts:login')
+        return redirect("accounts:login")
+
 
 class Messages(TemplateView):
     """
     Представление для вывода сообщения об успешной регистрации
     """
+
     template_name = "accounts/messages.html"
 
 
@@ -56,22 +63,23 @@ class RegisterView(CreateView):
     """
     Представление для регистрации пользователей
     """
+
     form_class = UserCreationForm
-    template_name = 'accounts/register.html'
-    success_url = reverse_lazy('accounts:message')
-    #success_url = "/"
+    template_name = "accounts/register.html"
+    success_url = reverse_lazy("accounts:message")
+    # success_url = "/"
 
     def form_valid(self, form):
         response = super().form_valid(form)
-
-        Profile.objects.create(user = self.object)
+        Profile.objects.create(user=self.object)
         username = form.cleaned_data.get("username")
         password = form.cleaned_data.get("password1")
 
-        user = authenticate(request=self.request,
-                            username=username,
-                            password=password,
-                            )
+        user = authenticate(
+            request=self.request,
+            username=username,
+            password=password,
+        )
         if user is not None:
             login(request=self.request, user=user)
         return response

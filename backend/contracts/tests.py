@@ -1,6 +1,7 @@
 """
 Тесты на основе TestCase
 """
+
 import datetime
 import os
 import shutil
@@ -25,10 +26,12 @@ class ContractModelTest(TestCase):
     """
     Класс для тестирования создания объектов модели контракта
     """
+
     def setUp(self):
         """
         Метод установки значений для тестов перед проведением каждого теста заново
         """
+
         self.product = Product.objects.create(
             name="TestProduct",
             cost=100,
@@ -55,15 +58,17 @@ class ContractModelTest(TestCase):
             lead=self.lead,
         )
 
-
     def test_model_contract(self):
         """
         Тест проверки создания моделей контракта
         """
+
         self.assertEqual(self.contract.name, "TestContract")
         self.assertNotEqual(self.contract.cost, 1100)
         self.assertEqual(self.contract.products.name, "TestProduct")
-        self.assertEqual(str(self.contract.start_date), str(datetime.datetime.now().date()))
+        self.assertEqual(
+            str(self.contract.start_date), str(datetime.datetime.now().date())
+        )
         self.assertEqual(Contract.objects.count(), 1)
         self.assertEqual(self.contract.lead.phone, "+1234567")
 
@@ -72,6 +77,7 @@ class ContractTestView(TestCase):
     """
     Класс проверки представлений для контрактов
     """
+
     @classmethod
     def setUpClass(cls):
         """
@@ -79,15 +85,16 @@ class ContractTestView(TestCase):
         Значения используются на протяжении всего тестирования. Используется для данных,
         используемых в каждом тесте в целях экономии ресурсов.
         """
+
         super().setUpClass()
         cls.client = Client()
 
         cls.manager = User.objects.create_user(
-            username="Manager",
-            password="ManagerPassword")
+            username="Manager", password="ManagerPassword"
+        )
         cls.admin = User.objects.create_superuser(
-            username="Admin",
-            password="AdminPassword")
+            username="Admin", password="AdminPassword"
+        )
         cls.product = Product.objects.create(
             name="TestProduct",
             cost=100,
@@ -113,9 +120,10 @@ class ContractTestView(TestCase):
         Метод для удаления медиа файлов после прогона всех тестов. Запускается в конце, после
         отработки всех тестов.
         """
+
         # Проверяем, существует ли переопределённая настройка
-        if hasattr(cls, '_overridden_settings') and cls._overridden_settings:
-            media_root = cls._overridden_settings.get('MEDIA_ROOT')
+        if hasattr(cls, "_overridden_settings") and cls._overridden_settings:
+            media_root = cls._overridden_settings.get("MEDIA_ROOT")
             if media_root and os.path.exists(media_root):
                 shutil.rmtree(media_root, ignore_errors=True)
         super().tearDownClass()
@@ -125,6 +133,7 @@ class ContractTestView(TestCase):
         Метод установки значений для тестов, используется перед каждым тестом заново.
         Используется для данных, изменяемых в каждом тесте.
         """
+
         self.contract = Contract.objects.create(
             name="TestContract",
             products=self.product,
@@ -137,18 +146,20 @@ class ContractTestView(TestCase):
         """
         Метод для входа менеджера, можно было обозвать юзером, но согласно ТЗ "Менеджер"
         """
+
         return self.client.login(
             username="Manager",
-            password="ManagerPassword"
+            password="ManagerPassword",
         )
 
     def login_admin(self):
         """
         Метод для входа администратора.
         """
+
         return self.client.login(
             username="Admin",
-            password="AdminPassword"
+            password="AdminPassword",
         )
 
     def test_list_view_contract(self):
@@ -156,6 +167,7 @@ class ContractTestView(TestCase):
         Тест проверки невозможности просмотра списка контрактов неавторизованным пользователем.
         Возвращает код 302 и перенаправляет на страницу входа.
         """
+
         self.client.logout()
         response = self.client.get(reverse("contracts:contracts-list"))
         self.assertEqual(response.status_code, 302)
@@ -167,12 +179,15 @@ class ContractTestView(TestCase):
         Возвращает код 403 - нет доступа. После предоставления необходимых разрешений -
         возвращает код 200.
         """
+
         self.login_manager()
         response = self.client.get(reverse("contracts:contracts-list"))
         self.assertEqual(response.status_code, 403)
 
         content_type = ContentType.objects.get_for_model(Contract)
-        permission = Permission.objects.get(content_type=content_type, codename='view_contract')
+        permission = Permission.objects.get(
+            content_type=content_type, codename="view_contract"
+        )
         self.manager.user_permissions.add(permission)
 
         response = self.client.get(reverse("contracts:contracts-list"))
@@ -185,22 +200,22 @@ class ContractTestView(TestCase):
         Тест проверки возможности просмотра администратором списка контрактов без
         предоставления дополнительных прав, сразу возвращается код 200.
         """
+
         self.login_admin()
         response = self.client.get(reverse("contracts:contracts-list"))
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(self.contract.lead.first_name, "Tom")
         self.assertEqual(self.contract.cost, 120)
 
-
     def test_detail_view(self):
         """
         Тест проверки невозможности просмотра деталей контракта неавторизованным
         пользователем. Возвращает код 302 и перенаправляет на страницу входа.
         """
+
         self.client.logout()
-        response = self.client.get(reverse(
-            "contracts:contracts-detail",
-            kwargs={"pk":self.contract.pk})
+        response = self.client.get(
+            reverse("contracts:contracts-detail", kwargs={"pk": self.contract.pk})
         )
         self.assertEqual(response.status_code, 302)
         self.assertIn(str(settings.LOGIN_URL), response.url)
@@ -210,20 +225,21 @@ class ContractTestView(TestCase):
         Тест проверки возможности просмотра деталей контракта авторизованным пользователем.
         Без разрешений возвращает код 403, после их предоставления - 200.
         """
+
         self.login_manager()
-        response = self.client.get(reverse(
-            "contracts:contracts-detail",
-            kwargs={"pk": self.contract.pk})
+        response = self.client.get(
+            reverse("contracts:contracts-detail", kwargs={"pk": self.contract.pk})
         )
         self.assertEqual(response.status_code, 403)
 
         content_type = ContentType.objects.get_for_model(Contract)
-        permission = Permission.objects.get(content_type=content_type, codename='view_contract')
+        permission = Permission.objects.get(
+            content_type=content_type, codename="view_contract"
+        )
         self.manager.user_permissions.add(permission)
 
-        response = self.client.get(reverse(
-            "contracts:contracts-detail",
-            kwargs={"pk": self.contract.pk})
+        response = self.client.get(
+            reverse("contracts:contracts-detail", kwargs={"pk": self.contract.pk})
         )
         self.assertEqual(response.status_code, 200)
 
@@ -232,31 +248,30 @@ class ContractTestView(TestCase):
         Тест, подтверждающий возможность администратора просматривать детали контракта без
         предоставления дополнительных прав. Возвращает код 200.
         """
+
         self.login_admin()
-        response = self.client.get(reverse(
-            "contracts:contracts-detail",
-            kwargs={"pk": self.contract.pk})
+        response = self.client.get(
+            reverse("contracts:contracts-detail", kwargs={"pk": self.contract.pk})
         )
         self.assertEqual(response.status_code, 200)
-
 
     def test_create_contract(self):
         """
         Тест проверки невозможности создания контракта неавторизованным пользователем.
         Логичен возврат кода 302 и перенаправление на страницу входа.
         """
+
         self.client.logout()
         data = {
-            "name":"TestCont",
-            "products":self.product.pk,
+            "name": "TestCont",
+            "products": self.product.pk,
             "duration": "7 days",
-            "cost":'12',
-            "lead":self.lead.pk,
+            "cost": "12",
+            "lead": self.lead.pk,
         }
         response = self.client.post(reverse("contracts:contracts_create"), data=data)
         self.assertEqual(response.status_code, 302)
         self.assertIn(str(settings.LOGIN_URL), response.url)
-
 
     def test_create_manager(self):
         """
@@ -264,17 +279,20 @@ class ContractTestView(TestCase):
         разрешений возвращается код 403, после их получения 302, создается контракт и идет
         перенаправлением на страницу списка контрактов.
         """
+
         self.login_manager()
         product_ct = ContentType.objects.get_for_model(Product)
         lead_ct = ContentType.objects.get_for_model(Lead)
-        view_product = Permission.objects.get(content_type=product_ct, codename='view_product')
-        view_lead = Permission.objects.get(content_type=lead_ct, codename='view_lead')
+        view_product = Permission.objects.get(
+            content_type=product_ct, codename="view_product"
+        )
+        view_lead = Permission.objects.get(content_type=lead_ct, codename="view_lead")
         self.manager.user_permissions.add(view_product, view_lead)
         data = {
             "name": "TestCont",
             "products": self.product.pk,
             "duration": "7 00:00:00",
-            "cost": '12',
+            "cost": "12",
             "lead": self.lead.pk,
         }
         self.product.is_active = True
@@ -283,8 +301,12 @@ class ContractTestView(TestCase):
         self.assertEqual(response.status_code, 403)
 
         content_type = ContentType.objects.get_for_model(Contract)
-        view_perm = Permission.objects.get(content_type=content_type, codename='view_contract')
-        add_perm = Permission.objects.get(content_type=content_type, codename='add_contract')
+        view_perm = Permission.objects.get(
+            content_type=content_type, codename="view_contract"
+        )
+        add_perm = Permission.objects.get(
+            content_type=content_type, codename="add_contract"
+        )
         self.manager.user_permissions.add(view_perm, add_perm)
 
         response = self.client.post(reverse("contracts:contracts_create"), data=data)
@@ -294,19 +316,19 @@ class ContractTestView(TestCase):
         new_contract = Contract.objects.get(name="TestCont")
         self.assertEqual(new_contract.cost, 12)
 
-
     def test_create_admin(self):
         """
         Тест проверки возможности создания нового контракта админом.
         Создается контракт и возвращается код 302 с перенаправлением наи страницу списка
         контрактов.
         """
+
         self.login_admin()
         data = {
             "name": "TestCont",
             "products": self.product.pk,
             "duration": "7 00:00:00",
-            "cost": '12',
+            "cost": "12",
             "lead": self.lead.pk,
         }
         self.product.is_active = True
@@ -320,28 +342,26 @@ class ContractTestView(TestCase):
         self.assertEqual(new_contract.name, "TestCont")
         self.assertNotEqual(new_contract.lead.pk, 4)
 
-
     def test_update_view(self):
         """
         Тест проверки невозможности обновления контракта неавторизованным пользователем.
         Возвращает код 302 и перенаправляет на страницу входа.
         """
+
         self.client.logout()
         data = {
             "name": "TestCont",
             "products": self.product.pk,
             "duration": "7 00:00:00",
-            "cost": '12',
+            "cost": "12",
             "lead": self.lead.pk,
         }
-        response = self.client.post(reverse(
-            "contracts:contract-update",
-            kwargs={"pk":self.contract.pk}),
-            data=data
+        response = self.client.post(
+            reverse("contracts:contract-update", kwargs={"pk": self.contract.pk}),
+            data=data,
         )
         self.assertEqual(response.status_code, 302)
         self.assertIn(str(settings.LOGIN_URL), response.url)
-
 
     def test_update_manager(self):
         """
@@ -349,76 +369,74 @@ class ContractTestView(TestCase):
         предоставления необходимых разрешений - 302 с обновлением полей контракта и перенаправлением
         на страницу деталей контракта.
         """
+
         self.login_manager()
         product_ct = ContentType.objects.get_for_model(Product)
         lead_ct = ContentType.objects.get_for_model(Lead)
-        view_product = Permission.objects.get(content_type=product_ct, codename='view_product')
-        view_lead = Permission.objects.get(content_type=lead_ct, codename='view_lead')
+        view_product = Permission.objects.get(
+            content_type=product_ct, codename="view_product"
+        )
+        view_lead = Permission.objects.get(content_type=lead_ct, codename="view_lead")
         self.manager.user_permissions.add(view_product, view_lead)
         data = {
             "name": "TestCont",
             "products": self.product.pk,
             "duration": "7 00:00:00",
-            "cost": '18',
+            "cost": "18",
             "lead": self.lead.pk,
         }
-        response = self.client.post(reverse(
-            "contracts:contract-update",
-            kwargs={"pk": self.contract.pk}),
-            data=data
+        response = self.client.post(
+            reverse("contracts:contract-update", kwargs={"pk": self.contract.pk}),
+            data=data,
         )
         self.assertEqual(response.status_code, 403)
 
         content_type = ContentType.objects.get_for_model(Contract)
         view_perm = Permission.objects.get(
-            content_type=content_type,
-            codename='view_contract'
+            content_type=content_type, codename="view_contract"
         )
         change_perm = Permission.objects.get(
-            content_type=content_type,
-            codename='change_contract'
+            content_type=content_type, codename="change_contract"
         )
         self.manager.user_permissions.add(view_perm, change_perm)
 
-        response = self.client.post(reverse(
-            "contracts:contract-update",
-            kwargs={"pk": self.contract.pk}),
-            data=data
+        response = self.client.post(
+            reverse("contracts:contract-update", kwargs={"pk": self.contract.pk}),
+            data=data,
         )
         self.contract.refresh_from_db()
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse(
-            "contracts:contracts-detail",
-            kwargs={"pk":self.contract.pk})
-            )
+        self.assertRedirects(
+            response,
+            reverse("contracts:contracts-detail", kwargs={"pk": self.contract.pk}),
+        )
         self.assertTrue(Contract.objects.filter(name="TestCont").exists())
         new_contract = Contract.objects.get(name="TestCont")
         self.assertEqual(new_contract.cost, 18)
-
 
     def test_update_admin(self):
         """
         Тест проверки возможности обновления полей контракта админом. Возвращает
         код 302 с перенаправлением на страницу деталей контракта.
         """
+
         self.login_admin()
         data = {
             "name": "TestCont",
             "products": self.product.pk,
             "duration": "7 00:00:00",
-            "cost": '12',
+            "cost": "12",
             "lead": self.lead.pk,
         }
-        response = self.client.post(reverse(
-            "contracts:contract-update",
-            kwargs={"pk": self.contract.pk}),
-            data=data
+        response = self.client.post(
+            reverse("contracts:contract-update", kwargs={"pk": self.contract.pk}),
+            data=data,
         )
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse(
-            "contracts:contracts-detail",
-            kwargs={"pk": self.contract.pk})
-                             )
+        self.assertRedirects(
+            response,
+            reverse("contracts:contracts-detail", kwargs={"pk": self.contract.pk}),
+        )
         self.assertTrue(Contract.objects.filter(name="TestCont").exists())
         new_contract = Contract.objects.get(name="TestCont")
         self.assertEqual(new_contract.products.name, "TestProduct")
@@ -428,13 +446,12 @@ class ContractTestView(TestCase):
         Тест проверки невозможности удаления контракта неавторизованным пользователем.
         Возвращает код 403.
         """
+
         self.client.logout()
-        response = self.client.post(reverse(
-            "contracts:contract-delete",
-            kwargs={"pk":self.contract.pk})
+        response = self.client.post(
+            reverse("contracts:contract-delete", kwargs={"pk": self.contract.pk})
         )
         self.assertEqual(response.status_code, 403)
-
 
     def test_delete_manager(self):
         """
@@ -442,35 +459,37 @@ class ContractTestView(TestCase):
         специальных разрешений возвращается код 403, так как такое поведение зашито
         в представлении - удалять разрешено только админу.
         """
+
         self.login_manager()
-        response = self.client.post(reverse(
-            "contracts:contract-delete",
-            kwargs={"pk": self.contract.pk})
+        response = self.client.post(
+            reverse("contracts:contract-delete", kwargs={"pk": self.contract.pk})
         )
         self.assertEqual(response.status_code, 403)
 
         content_type = ContentType.objects.get_for_model(Contract)
-        view_perm = Permission.objects.get(content_type=content_type, codename='view_contract')
-        delete_perm = Permission.objects.get(content_type=content_type, codename='delete_contract')
+        view_perm = Permission.objects.get(
+            content_type=content_type, codename="view_contract"
+        )
+        delete_perm = Permission.objects.get(
+            content_type=content_type, codename="delete_contract"
+        )
         self.manager.user_permissions.add(view_perm, delete_perm)
 
-        response = self.client.post(reverse(
-            "contracts:contract-delete",
-            kwargs={"pk": self.contract.pk})
+        response = self.client.post(
+            reverse("contracts:contract-delete", kwargs={"pk": self.contract.pk})
         )
         self.assertEqual(response.status_code, 403)
-
 
     def test_delete_admin(self):
         """
         Тест проверки удаления контракта админом. Происходит удаление, возвращается код 302 и
         перенаправление на страницу списка контрактов.
         """
+
         self.login_admin()
-        response = self.client.post(reverse(
-            "contracts:contract-delete",
-            kwargs={"pk": self.contract.pk})
+        response = self.client.post(
+            reverse("contracts:contract-delete", kwargs={"pk": self.contract.pk})
         )
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("contracts:contracts-list"))
-        self.assertFalse(Contract.objects.filter( name="TestContract").exists())
+        self.assertFalse(Contract.objects.filter(name="TestContract").exists())

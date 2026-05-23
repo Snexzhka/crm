@@ -1,6 +1,7 @@
 """
 Модель для контрактов
 """
+
 from django.db import models
 
 from products.models import Product
@@ -20,24 +21,31 @@ class Contract(models.Model):
         duration:продолжительность действия в днях
         cost:стоимость (цена контракта)
         lead:связь с потенциальным клиентом
-
     """
+
     class Meta:
         ordering = ["pk", "name"]
 
     name: models.CharField = models.CharField(max_length=100)
-    products: models.ForeignKey[Product] = models.ForeignKey(Product, on_delete=models.CASCADE)
-    file: models.FileField = models.FileField(null=True, blank=True, upload_to="contracts/file")
+    products: models.ForeignKey[Product] = models.ForeignKey(
+        Product, on_delete=models.CASCADE
+    )
+    file: models.FileField = models.FileField(
+        null=True, blank=True, upload_to="contracts/file"
+    )
     start_date: models.DateField = models.DateField(auto_now_add=True)
     duration: models.DurationField = models.DurationField()
-    cost: models.DecimalField = models.DecimalField(default=0, max_digits=8, decimal_places=2)
-    lead: models.ForeignKey['Lead'] = models.ForeignKey(
+    cost: models.DecimalField = models.DecimalField(
+        default=0, max_digits=8, decimal_places=2
+    )
+    lead: models.ForeignKey["Lead"] = models.ForeignKey(
         "leads.Lead",
         on_delete=models.SET_NULL,
-        null=True, blank=True,
-        verbose_name="Лид"
+        null=True,
+        blank=True,
+        verbose_name="Лид",
     )
-    #profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    # profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
     @property
     def end_date(self):
