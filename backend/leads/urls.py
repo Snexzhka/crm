@@ -1,6 +1,7 @@
 """
 подключение ссылок приложения "leads"
 """
+
 from django.urls import path
 
 from .views import (
@@ -10,7 +11,6 @@ from .views import (
     LeadUpdateView,
     LeadDeleteView,
     ConvertLeadView,
-
 )
 
 app_name = "leads"
@@ -22,5 +22,4 @@ urlpatterns = [
     path("<int:pk>/edit/", LeadUpdateView.as_view(), name="leads-update"),
     path("<int:pk>/delete/", LeadDeleteView.as_view(), name="leads-delete"),
     path("<int:pk>/converts/", ConvertLeadView.as_view(), name="leads-convert"),
-
-    ]
+]
