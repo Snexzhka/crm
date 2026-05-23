@@ -1,6 +1,7 @@
 """
 Модель для определения пользователей приложения
 """
+
 from django.contrib.auth import get_user_model
 from django.db import models
 
@@ -16,6 +17,7 @@ class Profile(models.Model):
         department:отдел
         user:связь с таблицей User
     """
+
     class Meta:
         ordering = ["pk", "user"]
 

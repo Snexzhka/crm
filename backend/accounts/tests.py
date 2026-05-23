@@ -1,6 +1,7 @@
 """
 Тесты на основе pytest
 """
+
 import pytest
 
 from django.contrib.auth import get_user_model
@@ -9,12 +10,14 @@ from django.urls import reverse
 User = get_user_model()
 
 
-@pytest.mark.parametrize("field, value", [
-    ('username', 'short'),
-    ('password1', '123'),
-    ('password2', '123___'),
-
-])
+@pytest.mark.parametrize(
+    "field, value",
+    [
+        ("username", "short"),
+        ("password1", "123"),
+        ("password2", "123___"),
+    ],
+)
 @pytest.mark.django_db
 def test_register(client, field, value):
     """
@@ -25,11 +28,12 @@ def test_register(client, field, value):
     :param value:
     :return: 200
     """
+
     url = reverse("accounts:registers")
     data = {
-        'username': 'validuser',
-        'password1': 'strongpassword123',
-        'password2': 'verySecure123'
+        "username": "validuser",
+        "password1": "strongpassword123",
+        "password2": "verySecure123",
     }
 
     data[field] = value
@@ -37,7 +41,7 @@ def test_register(client, field, value):
     response = client.post(url, data)
     assert response.status_code == 200
     assert "form" in response.context
-    assert response.context['form'].errors
+    assert response.context["form"].errors
     assert not User.objects.filter(username="validuser").exists()
 
 
@@ -49,15 +53,16 @@ def test_register_success(client):
     :param client: fiхtures
     :return: 302
     """
-    url = reverse('accounts:registers')
+
+    url = reverse("accounts:registers")
     data = {
-        'username': 'newuser',
-        'password1': 'verySecure123',
-        'password2': 'verySecure123',
+        "username": "newuser",
+        "password1": "verySecure123",
+        "password2": "verySecure123",
     }
     response = client.post(url, data)
     assert response.status_code == 302
-    assert User.objects.filter(username='newuser').exists()
+    assert User.objects.filter(username="newuser").exists()
     assert "message" in response.url
 
 
@@ -70,7 +75,7 @@ def test_login(db, client, user):
     """
 
     url = reverse("accounts:login")
-    data = {'username': 'TestUser', 'password': 'Test1999'}
+    data = {"username": "TestUser", "password": "Test1999"}
 
     response = client.post(url, data)
     assert response.status_code == 302
@@ -85,14 +90,16 @@ def test_invalid_password(client):
     :param client: fiхtures
     :return: 200
     """
+
     url = reverse("accounts:login")
-    data = {'username': 'TestUser', 'password': 'Test'}
+    data = {"username": "TestUser", "password": "Test"}
 
     response = client.post(url, data)
     assert response.status_code == 200
     assert not response.wsgi_request.user.is_authenticated
-    assert response.context['form'].errors
-    assert 'form' in response.context
+    assert response.context["form"].errors
+    assert "form" in response.context
+
 
 def test_logout(client, auth_user):
     """
@@ -100,8 +107,8 @@ def test_logout(client, auth_user):
     :param client: fiхtures
     :return: 200
     """
-    url = reverse("accounts:logout")
 
+    url = reverse("accounts:logout")
     response = client.get(url)
     assert response.status_code == 302
     assert not response.wsgi_request.user.is_authenticated
@@ -120,17 +127,19 @@ def test_error_register(db, client, user):
     :param client: fiхtures
     :return: 200
     """
-    url = reverse('accounts:registers')
+
+    url = reverse("accounts:registers")
     data = {
-        'username': 'TestUser',
-        'password1': '12345test',
-        'password2': '12345test',
+        "username": "TestUser",
+        "password1": "12345test",
+        "password2": "12345test",
     }
 
     response = client.post(url, data)
     assert response.status_code == 200
-    assert 'form' in response.context
-    assert 'username' in response.context['form'].errors
+    assert "form" in response.context
+    assert "username" in response.context["form"].errors
+
 
 def test_login_for_all(client):
     """
@@ -138,6 +147,7 @@ def test_login_for_all(client):
     :param client: fiхtures
     :return: 200
     """
+
     url = reverse("accounts:login")
     response = client.get(url)
     assert response.status_code == 200
@@ -149,6 +159,7 @@ def test_home_page(client, auth_user):
     :param client: fiхtures
     :return: 302
     """
+
     response = client.get("/")
     assert response.status_code == 200
     response = auth_user.get("/")

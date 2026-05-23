@@ -1,9 +1,10 @@
 """
 Конфигурация для приложения accounts
 """
+
 from django.apps import AppConfig
 
 
 class AccountsConfig(AppConfig):
-    name = 'accounts'
+    name = "accounts"
     verbose_name = "Пользователи и роли"
