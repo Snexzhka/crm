@@ -7,9 +7,9 @@ from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 
-
 from ads.models import Advert
 from products.models import Product
+
 from .models import Lead
 
 

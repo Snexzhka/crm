@@ -5,25 +5,25 @@
 """
 
 from django.contrib import messages
-from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
     PermissionRequiredMixin,
     UserPassesTestMixin,
-    LoginRequiredMixin,
 )
-
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse, reverse_lazy
 from django.views.generic import (
-    ListView,
-    DetailView,
     CreateView,
-    UpdateView,
     DeleteView,
+    DetailView,
     FormView,
+    ListView,
+    UpdateView,
 )
 
 from customers.models import Customer
-from .forms import ProfileForm, ConvertLeadForm
+
+from .forms import ConvertLeadForm, ProfileForm
 from .models import Lead
 
 
