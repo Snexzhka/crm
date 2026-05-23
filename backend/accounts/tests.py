@@ -62,12 +62,13 @@ def test_register_success(client):
 
 
 @pytest.mark.django_db
-def test_login(client):
+def test_login(db, client, user):
     """
     Тест проверки входа пользователя. Возвращает код 302 и отправляет на главную страницу.
     :param client: fiхtures
     :return: 302
     """
+
     url = reverse("accounts:login")
     data = {'username': 'TestUser', 'password': 'Test1999'}
 
@@ -112,7 +113,7 @@ def test_logout(client, auth_user):
     assert "login" in response.url
 
 
-def test_error_register(client):
+def test_error_register(db, client, user):
     """
     Тест попытки повторной регистрации пользователя.
     Пользователь не создан.
