@@ -5,11 +5,11 @@
 from django.urls import path
 
 from .views import (
-    ContractListView,
-    ContractsDetailView,
-    ContractsCreateView,
-    ContractUpdateView,
     ContractDeleteView,
+    ContractListView,
+    ContractsCreateView,
+    ContractsDetailView,
+    ContractUpdateView,
 )
 
 app_name = "contracts"

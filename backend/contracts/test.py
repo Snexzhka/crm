@@ -9,6 +9,7 @@ from django.urls import reverse
 
 from leads.models import Lead
 from products.models import Product
+
 from .models import Contract
 
 
