@@ -5,10 +5,10 @@
 from django.urls import path
 
 from .views import (
-    CustomerListView,
     CustomerCreateView,
     CustomerDeleteView,
     CustomerDetailView,
+    CustomerListView,
     CustomerUpdateView,
 )
 

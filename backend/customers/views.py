@@ -4,22 +4,21 @@
 клиентов
 """
 
-from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import (
     PermissionRequiredMixin,
     UserPassesTestMixin,
 )
-
+from django.urls import reverse, reverse_lazy
 from django.views.generic import (
-    ListView,
-    DetailView,
-    DeleteView,
     CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
     UpdateView,
 )
 
-from .models import Customer
 from .forms import CustomerForm
+from .models import Customer
 
 
 class CustomerListView(PermissionRequiredMixin, ListView):

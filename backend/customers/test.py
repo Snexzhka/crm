@@ -3,14 +3,15 @@
 """
 
 from datetime import timedelta
-import pytest
 
+import pytest
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 
 from contracts.models import Contract
 from leads.models import Lead
+
 from .models import Customer
 
 

@@ -4,8 +4,8 @@
 
 from django.db import models
 
-from leads.models import Lead
 from contracts.models import Contract
+from leads.models import Lead
 
 
 class Customer(models.Model):

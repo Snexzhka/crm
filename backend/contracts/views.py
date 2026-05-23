@@ -3,20 +3,21 @@
 удаления контрактов, просмотра списка контрактов и деталей
 """
 
-from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import (
     PermissionRequiredMixin,
     UserPassesTestMixin,
 )
+from django.urls import reverse, reverse_lazy
 from django.views.generic import (
-    ListView,
-    DetailView,
-    DeleteView,
     CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
     UpdateView,
 )
-from .models import Contract
+
 from .forms import ContractForm
+from .models import Contract
 
 
 class ContractListView(PermissionRequiredMixin, ListView):
