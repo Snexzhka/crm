@@ -3,14 +3,14 @@ import datetime
 import pytest
 from django.contrib.auth import get_user_model
 
-# from pytest_django.fixtures import client
-
 from ads.models import Advert
 from contracts.models import Contract
 from customers.models import Customer
 from leads.models import Lead
 from products.models import Product
 from tasks.models import Task
+
+# from pytest_django.fixtures import client
 
 User = get_user_model()
 
