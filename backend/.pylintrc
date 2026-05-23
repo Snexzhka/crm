@@ -419,7 +419,9 @@ logging-modules=logging
 [MASTER]
 load-plugins=pylint_django
 
-ignore-patterns=__init__.py
+ignore-patterns=__init__.py, .*test.*,.*tests.*
+
+min-similarity-lines=10
 
 
 [MESSAGES CONTROL]
