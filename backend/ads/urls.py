@@ -1,5 +1,7 @@
-from django.contrib import admin
-from django.urls import path, include
+"""
+Подключение путей (ссылок) для работы приложения
+"""
+from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from .views import (

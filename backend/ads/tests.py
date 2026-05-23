@@ -1,15 +1,20 @@
+"""
+Тестирование с помощью TestCase
+"""
 import os
 import shutil
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase, Client
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.urls import reverse
 
-from .models import Advert
 from products.models import Product
+from .models import Advert
 
+User = get_user_model()
 
 class AdvertModelTest(TestCase):
     """
@@ -293,8 +298,14 @@ class AdvertTestView(TestCase):
         self.assertEqual(response.status_code, 403)
 
         content_type = ContentType.objects.get_for_model(Advert)
-        change_permission = Permission.objects.get(content_type=content_type, codename='change_advert')
-        view_permission = Permission.objects.get(content_type=content_type, codename='view_advert')
+        change_permission = Permission.objects.get(
+            content_type=content_type,
+            codename='change_advert'
+        )
+        view_permission = Permission.objects.get(
+            content_type=content_type,
+            codename='view_advert'
+        )
         self.marketer.user_permissions.add(change_permission, view_permission)
 
         response = self.client.post(reverse("ads:ads-update", kwargs={"pk": self.ads.pk}),
@@ -348,11 +359,17 @@ class AdvertTestView(TestCase):
         удалить может только админ.
         """
         self.login_marketer()
-        response = self.client.post(reverse("ads:ads_delete", kwargs={"pk": self.ads.pk}))
+        response = self.client.post(reverse(
+            "ads:ads_delete",
+            kwargs={"pk": self.ads.pk})
+        )
         self.assertEqual(response.status_code, 403)
 
         content_type = ContentType.objects.get_for_model(Advert)
-        delete_permission = Permission.objects.get(content_type=content_type, codename='delete_advert')
+        delete_permission = Permission.objects.get(
+            content_type=content_type,
+            codename='delete_advert'
+        )
         view_permission = Permission.objects.get(content_type=content_type, codename='view_advert')
         self.marketer.user_permissions.add(delete_permission, view_permission)
 

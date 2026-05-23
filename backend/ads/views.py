@@ -1,3 +1,7 @@
+"""
+Представление для вывода данных по рекламным услугам - список, детали услуги, создание,
+удаление и обновление услуги.
+"""
 from django.db import models
 from django.db.models import (
     Count,
@@ -23,9 +27,8 @@ from django.views.generic import (
     UpdateView,
 )
 
-from .models import Advert
 from .forms import AdvertForm
-
+from .models import Advert
 
 class AdventView(PermissionRequiredMixin, ListView):
     """
@@ -61,7 +64,7 @@ class AdventCreateView(PermissionRequiredMixin, CreateView):
     form_class = AdvertForm
 
     def form_valid(self, form):
-        self.object = form.save()
+        self.object = form.save()   # pylint: disable=attribute-defined-outside-init
         response = super().form_valid(form)
 
         return response

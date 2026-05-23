@@ -1,19 +1,19 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
-from django.http import HttpRequest, HttpResponse, request
-from django.shortcuts import render, redirect
+from django.http import HttpRequest
+from django.shortcuts import  redirect
 from django.urls import reverse_lazy
 from django.views import View
 from django.shortcuts import render
 from django.views.generic import CreateView, TemplateView
 from django.contrib.auth.decorators import login_required
 
-from .models import Profile
-from products.models import Product
 from ads.models import Advert
-from leads.models import Lead
 from customers.models import Customer
+from leads.models import Lead
+from products.models import Product
 from tasks.models import Task
+from .models import Profile
 
 @login_required
 def home_page(request: HttpRequest):
@@ -35,6 +35,9 @@ class LogoutPage(View):
     Представление для выхода из аккаунта
     """
     def get(self, request: HttpRequest):
+        """
+        Метод для выхода из аккаунта
+        """
         logout(request)
         return redirect('accounts:login')
 

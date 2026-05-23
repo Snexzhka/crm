@@ -1,3 +1,6 @@
+"""
+Тестирование приложения на основе pytest
+"""
 import pytest
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
@@ -45,7 +48,6 @@ def test_view_by_admin(auth_admin):
     """
     Тест проверки возможности просмотра списка рекламы администратором.
     Возвращает код 200.
-    :param user:
     :param auth_user: fixture
     :param ads: fixture
     :return: 200
@@ -58,12 +60,10 @@ def test_view_by_admin(auth_admin):
 
 
 @pytest.mark.django_db
-def test_view(client, user):
+def test_view(client):
     """
     Тест проверки невозможности просмотра списка рекламы неавторизованным пользователем.
     Возвращает код 302 и направляет на страницу входа.
-    :param user:
-    :param auth_user: fixture
     :param ads: fixture
     :return: 302
     """
@@ -73,11 +73,10 @@ def test_view(client, user):
     assert "login" in response.url
 
 @pytest.mark.django_db
-def test_view_detail(client, user, ads):
+def test_view_detail(client,  ads):
     """
     Тест проверки невозможности просмотра деталей рекламы неавторизованным пользователем.
     Возвращает код 302 и направляет на страницу входа.
-    :param user:
     :param auth_user: fixture
     :param ads: fixture
     :return: 302
@@ -117,7 +116,6 @@ def test_detail_by_admin(auth_admin, ads):
     """
     Тест проверки возможности просмотра деталей рекламы администратором.
     Возвращает код 200.
-    :param user:  fixture
     :param auth_user: fixture
     :param ads: fixture
     :return: 200
@@ -130,12 +128,11 @@ def test_detail_by_admin(auth_admin, ads):
 
 
 @pytest.mark.django_db
-def test_create_ads(client, ads, product):
+def test_create_ads(client, product):
     """
     Тест проверки невозможности создания рекламной компании неавторизованным пользователем.
     Возвращает код 302 и направляет на страницу входа.
     :param client:  fixture
-    :param ads:  fixture
     :param product:  fixture
     :return: 302
     """
@@ -152,13 +149,12 @@ def test_create_ads(client, ads, product):
 
 
 @pytest.mark.django_db
-def test_create_by_user(ads, auth_user, product, user):
+def test_create_by_user(auth_user, product, user):
     """
     Тест проверки возможности создания рекламной компании авторизованным пользователем.
     Возвращает код 302, создает рекламную компанию и направляет на страницу списка рекламы
     при наличии определенных разрешений.
     :param client:  fixture
-    :param ads:  fixture
     :param product:  fixture
     :return: 302
     """
@@ -185,12 +181,11 @@ def test_create_by_user(ads, auth_user, product, user):
 
 
 @pytest.mark.django_db
-def test_create_by_admin(auth_admin, product, ads):
+def test_create_by_admin(auth_admin, product):
     """
     Тест проверки возможности создания рекламной компании администратором.
     Возвращает код 302, создает рекламную компанию и направляет на страницу списка рекламы.
     :param client:  fixture
-    :param ads:  fixture
     :param product:  fixture
     :return: 302
     """
@@ -209,7 +204,7 @@ def test_create_by_admin(auth_admin, product, ads):
 
 
 @pytest.mark.django_db
-def test_update_advert(client, user, product, ads):
+def test_update_advert(client, product, ads):
     """
     Тест проверки невозможности обновления рекламной компании неавторизованным пользователем.
     Возвращает код 302 и направляет на страницу входа.
@@ -289,13 +284,12 @@ def test_update_by_admin(auth_admin, product, ads):
 
 
 @pytest.mark.django_db
-def test_delete_ads(client, user, product, ads):
+def test_delete_ads(client, ads):
     """
     Тест проверки невозможности удаления рекламной компании неавторизованным пользователем.
     Возвращает код 403.
     :param client:  fixture
     :param ads:  fixture
-    :param product:  fixture
     :return: 403
     """
     url = reverse("ads:ads_delete", kwargs={"pk":ads.pk})
@@ -304,13 +298,12 @@ def test_delete_ads(client, user, product, ads):
 
 
 @pytest.mark.django_db
-def test_delete_by_user(auth_user, user, product, ads):
+def test_delete_by_user(auth_user, user, ads):
     """
     Тест проверки возможности удаления рекламной компании авторизованным пользователем.
     Возвращает код 403.
     :param client:  fixture
     :param ads:  fixture
-    :param product:  fixture
     :return: 403
     """
     url = reverse("ads:ads_delete", kwargs={"pk":ads.pk})
@@ -327,13 +320,12 @@ def test_delete_by_user(auth_user, user, product, ads):
 
 
 @pytest.mark.django_db
-def test_delete_admin(auth_admin, product, ads):
+def test_delete_admin(auth_admin,  ads):
     """
     Тест проверки возможности удаления рекламной компании администратором.
     Возвращает код 302, удаляет рекламную компанию и направляет на страницу списка рекламы.
     :param client:  fixture
     :param ads:  fixture
-    :param product:  fixture
     :return: 302
     """
     url = reverse("ads:ads_delete", kwargs={"pk":ads.pk})

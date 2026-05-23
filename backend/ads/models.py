@@ -1,10 +1,25 @@
+"""
+Модель для приложения ads
+"""
 from django.db import models
 
 from products.models import Product
 
 
-
 class Advert(models.Model):
+    """
+    Модель рекламной компании
+
+    Каждая компания имеет название, путь продвижения и бюджет.
+    Связана с продуктом, на который создается.
+
+    Поля:
+        name:Название рекламной компании
+        products:Продукт, для которого проводится реклама
+        promotion_path:Путь продвижения
+        budget:Стоимость рекламной компании
+
+    """
     class Meta:
         ordering = ["pk", "name"]
 
