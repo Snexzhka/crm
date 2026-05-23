@@ -1,3 +1,7 @@
+"""
+Представление, используеемое для ркгистрации в приложении,
+входа/выхода
+"""
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpRequest

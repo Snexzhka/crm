@@ -1,3 +1,6 @@
+"""
+Модель для определения пользователей приложения
+"""
 from django.contrib.auth import get_user_model
 from django.db import models
 
@@ -5,6 +8,14 @@ User = get_user_model()
 
 
 class Profile(models.Model):
+    """
+    Модель пользователей. Определяет профессию и отдел,
+    имеет связь с таблицей User
+    Поля:
+        job_title:профессия
+        department:отдел
+        user:связь с таблицей User
+    """
     class Meta:
         ordering = ["pk", "user"]
 
