@@ -13,6 +13,12 @@
                 <div class="d-flex justify-content-center fw-bold gap-4">
                     <a href="/leads/{{ object.pk }}/edit" class="btn btn-primary">Редактировать</a>
                     <a href="/leads/{{ object.pk }}/delete" class="btn btn-danger">Удалить</a>
+                    {% if object.customers.exists %}
+                        <form method="post" action="{% url 'leads:delete-with-customer' object.pk %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Удалить лида и клиента</button>
+                        </form>
+                    {% endif %}
                 </div>
             </div>
         </div>
