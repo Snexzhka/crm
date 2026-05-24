@@ -2,7 +2,9 @@
 """
 Обновление поля модели
 """
+
 import datetime
+
 from django.db import migrations, models
 
 
