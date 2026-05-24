@@ -36,8 +36,8 @@ class CustomerListView(PermissionRequiredMixin, ListView):
 
 class CustomerDetailView(PermissionRequiredMixin, DetailView):
     """
-    Представление для просмотра деталей активных клиентов. Для просмотра нужно разрешение
-    на просмотр или права админа.
+    Представление для просмотра деталей активных клиентов. Для просмотра нужно
+    разрешение на просмотр или права админа.
     """
 
     permission_required = "customers.view_customer"

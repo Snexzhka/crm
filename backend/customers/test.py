@@ -77,7 +77,8 @@ def test_view_by_admin(auth_admin):
 @pytest.mark.django_db
 def test_detail_customer(client, customer):
     """
-    Тест проверки невозможности просмотра деталей клиентов неавторизованным пользователем
+    Тест проверки невозможности просмотра деталей клиентов неавторизованным
+    пользователем
     :param client: fixture
     :param customer: fixture
     :return: 302
@@ -169,7 +170,8 @@ def test_create_customer(client, lead, ads, product):
 @pytest.mark.django_db
 def test_create_by_user(auth_user, user, lead, ads, product):
     """
-    Тест возможности создания клиента авторизованным пользователем при предоставлении доп.прав.
+    Тест возможности создания клиента авторизованным пользователем при
+    предоставлении доп.прав.
     :param auth_user: fixture
     :param lead: fixture
     :param ads: fixture
@@ -220,7 +222,8 @@ def test_create_by_user(auth_user, user, lead, ads, product):
 @pytest.mark.django_db
 def test_create_by_admin(auth_admin, lead, ads, product):
     """
-    Тест возможности создания клиента авторизованным пользователем без предоставления доп.прав.
+    Тест возможности создания клиента авторизованным пользователем без
+    предоставления доп.прав.
     :param auth_admin: fixture
     :param lead: fixture
     :param ads: fixture
@@ -297,8 +300,9 @@ def test_update_customer(client, customer, lead, ads, product):
 @pytest.mark.django_db
 def test_update_by_user(auth_user, user, customer, lead, ads, product):
     """
-    Тест возможности обновления клиентов авторизованным пользователем. После получения разрешений
-    создает нового клиента и возвращает 302 с перенаправлением на список клиентов.
+    Тест возможности обновления клиентов авторизованным пользователем. После
+    получения разрешений создает нового клиента и возвращает 302 с
+    перенаправлением на список клиентов.
     :param auth_user: fixture
     :param customer: fixture
     :param lead: fixture
