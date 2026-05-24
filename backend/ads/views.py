@@ -34,8 +34,8 @@ from .models import Advert
 
 class AdventView(PermissionRequiredMixin, ListView):
     """
-    Представление для получения списка рекламных компаний. Для просмотра необходимо либо наличие
-    прав на просмотр, либо права админа.
+    Представление для получения списка рекламных компаний. Для просмотра необходимо
+    либо наличие прав на просмотр, либо права админа.
     """
 
     permission_required = "ads.view_advert"
@@ -47,8 +47,8 @@ class AdventView(PermissionRequiredMixin, ListView):
 
 class AdventDetail(PermissionRequiredMixin, DetailView):
     """
-    Представление для получения деталей рекламных компаний. Для просмотра необходимо либо наличие
-    прав на просмотр, либо права админа
+    Представление для получения деталей рекламных компаний. Для просмотра необходимо
+    либо наличие прав на просмотр, либо права админа
     """
 
     permission_required = "ads.view_advert"
@@ -92,8 +92,8 @@ class AdventDeleteView(UserPassesTestMixin, DeleteView):
 
 class AdvertUpdateView(PermissionRequiredMixin, UpdateView):
     """
-    Представление для обновления рекламных компаний. Для обновления необходимо либо наличие
-    прав на обновление, либо права админа
+    Представление для обновления рекламных компаний. Для обновления необходимо либо
+    наличие прав на обновление, либо права админа
     """
 
     permission_required = "ads.change_advert"
