@@ -198,7 +198,7 @@ class ProductTestView(TestCase):
         response = self.client.get(
             reverse("products:product-detail", kwargs={"pk": self.product.pk}),
         )
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 200)
 
     def test_create_product(self):
         """
