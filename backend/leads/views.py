@@ -87,7 +87,8 @@ class LeadUpdateView(PermissionRequiredMixin, UpdateView):
 
 class LeadDeleteView(UserPassesTestMixin, DeleteView):
     """
-    Представление для удаления потенциальных клиентов. Для удаления необходимы права админа.
+    Представление для удаления потенциальных клиентов. Для удаления необходимы
+    права админа.
     """
 
     def test_func(self):
@@ -101,8 +102,8 @@ class LeadDeleteView(UserPassesTestMixin, DeleteView):
 
 class ConvertLeadView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
     """
-    Представление для перевода из списка потенциальных клиентов в список активных клиентов.
-    Необходимы права админа или разрешение.
+    Представление для перевода из списка потенциальных клиентов в список активных
+    клиентов. Необходимы права админа или разрешение.
     """
 
     template_name = "leads/convert_lead.html"
