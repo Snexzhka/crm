@@ -89,6 +89,9 @@ class AdventDeleteView(UserPassesTestMixin, DeleteView):
     raise_exception = True
     permission_denied_message = "Только администратор может удалять рекламные кампании."
 
+    # def get_permission_denied_message(self):
+    #     return "Только администратор может удалять рекламные кампании."
+
 
 class AdvertUpdateView(PermissionRequiredMixin, UpdateView):
     """
