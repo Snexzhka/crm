@@ -68,7 +68,8 @@ def test_register_success(client):
 @pytest.mark.django_db
 def test_login(db, client, user):
     """
-    Тест проверки входа пользователя. Возвращает код 302 и отправляет на главную страницу.
+    Тест проверки входа пользователя. Возвращает код 302 и отправляет на
+    главную страницу.
     :param client: fiхtures
     :return: 302
     """
