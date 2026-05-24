@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     'customers.apps.CustomersConfig',
     'products.apps.ProductsConfig',
     'leads.apps.LeadsConfig',
-    #'accounts.apps.AccountsConfig'
     'tasks.apps.TasksConfig',
     'accounts.apps.AccountsConfig',
 ]
@@ -110,7 +109,8 @@ if 'pytest' in sys.argv[0] or 'test' in sys.argv:
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': 'django.contrib.auth.password_validation'
+                '.UserAttributeSimilarityValidator',
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
@@ -147,17 +147,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 
 REST_FRAMEWORK = {
-    "DEFAULT_PAGINATION_CLASS":"rest_framework.pagination.PageNumberPagination",
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
-    "DEFAULT_FILTER_BACKENDS":[
+    "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",
     ]
 }
 
 LOGIN_REDIRECT_URL = "home"
-#LOGIN_REDIRECT_URL = '/admin/'
 
-#LOGIN_REDIRECT_URL = reverse_lazy("accounts:home")
-#LOGIN_URL = reverse_lazy("accounts:login")
 LOGIN_URL = "/accounts/login/"
 REGISTRATION_REDIRECT_URL = 'home'
