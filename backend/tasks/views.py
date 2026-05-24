@@ -30,7 +30,8 @@ from .models import Task
 
 class TaskListView(LoginRequiredMixin, ListView):
     """
-    Представление для просмотра списка текущих задач. Для просмотра необходима авторизация.
+    Представление для просмотра списка текущих задач. Для просмотра
+    необходима авторизация.
     """
 
     template_name = "tasks/tasks-list.html"
@@ -56,7 +57,8 @@ class TaskListView(LoginRequiredMixin, ListView):
 
 class TaskDetailView(LoginRequiredMixin, DetailView):
     """
-    Представление для просмотра деталей текущих задач. Для просмотра необходима авторизация.
+    Представление для просмотра деталей текущих задач. Для просмотра
+    необходима авторизация.
     """
 
     template_name = "tasks/tasks-detail.html"
