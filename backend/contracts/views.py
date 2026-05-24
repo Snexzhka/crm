@@ -22,8 +22,8 @@ from .models import Contract
 
 class ContractListView(PermissionRequiredMixin, ListView):
     """
-    Представление для просмотра списка контактов. Для просмотра необходимо разрешение на просмотр
-    или права админа
+    Представление для просмотра списка контактов. Для просмотра необходимо
+    разрешение на просмотр или права админа
     """
 
     permission_required = "contracts.view_contract"
@@ -35,8 +35,8 @@ class ContractListView(PermissionRequiredMixin, ListView):
 
 class ContractsDetailView(PermissionRequiredMixin, DetailView):
     """
-    Представление для просмотра деталей контактов. Для просмотра необходимо разрешение на просмотр
-    или права админа
+    Представление для просмотра деталей контактов. Для просмотра необходимо
+    разрешение на просмотр или права админа
     """
 
     permission_required = "contracts.view_contract"
@@ -66,8 +66,8 @@ class ContractsCreateView(PermissionRequiredMixin, CreateView):
 
 class ContractUpdateView(PermissionRequiredMixin, UpdateView):
     """
-    Представление для обновления контактов. Для обновления необходимо разрешение на обновление
-    или права админа
+    Представление для обновления контактов. Для обновления необходимо разрешение
+    на обновление или права админа
     """
 
     permission_required = "contracts.change_contract"
