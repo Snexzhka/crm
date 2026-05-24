@@ -7,6 +7,7 @@ from django.urls import path
 from .views import (
     ConvertLeadView,
     LeadDeleteView,
+    LeadDeleteWithCustomerView,
     LeadDetailView,
     LeadListView,
     LeadsCreateView,
@@ -22,4 +23,9 @@ urlpatterns = [
     path("<int:pk>/edit/", LeadUpdateView.as_view(), name="leads-update"),
     path("<int:pk>/delete/", LeadDeleteView.as_view(), name="leads-delete"),
     path("<int:pk>/converts/", ConvertLeadView.as_view(), name="leads-convert"),
+    path(
+        "<int:pk>/delete-with-customer/",
+        LeadDeleteWithCustomerView.as_view(),
+        name="delete-with-customer",
+    ),
 ]

@@ -10,6 +10,8 @@ from django.contrib.auth.mixins import (
     PermissionRequiredMixin,
     UserPassesTestMixin,
 )
+from django.db import transaction
+from django.db.models import ProtectedError
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
@@ -98,6 +100,34 @@ class LeadDeleteView(UserPassesTestMixin, DeleteView):
     success_url = reverse_lazy("leads:leads-list")
     raise_exception = True
     permission_denied_message = "Только администратор может удалять рекламные кампании."
+
+    def post(self, request, *args, **kwargs):
+        lead = self.get_object()
+        try:
+            with transaction.atomic():
+                lead.delete()
+            messages.success(request, "Лид удалён.")
+            return redirect("leads:leads-list")
+        except ProtectedError:
+            messages.error(
+                request,
+                "Нельзя удалить лида, который уже является активным клиентом. "
+                "Сначала удалите клиента. Или используйте кнопку удаления обоих.",
+            )
+            return redirect("leads:leads-detail", pk=lead.pk)
+
+
+class LeadDeleteWithCustomerView(UserPassesTestMixin, DeleteView):
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    def post(self, request, *args, **kwargs):
+        lead = get_object_or_404(Lead, pk=kwargs["pk"])
+        if lead.customers.exists():
+            lead.customers.all().delete()
+        lead.delete()
+        messages.success(request, "Лид и связанный клиент удалены.")
+        return redirect("leads:leads-list")
 
 
 class ConvertLeadView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
