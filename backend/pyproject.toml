@@ -8,6 +8,11 @@ exclude = [
 [tool.django-stubs]
 django_settings_module = "backend.settings"
 
+[flake8]
+max-line-length = 88
+extend-ignore = "E203, W503"
+exclude = ".git,__pycache__,migrations,.venv,venv"
+
 [tool.isort]
 profile = "black"
 line_length = 88
@@ -36,5 +41,3 @@ extend-exclude = '''
   | migrations
 )/
 '''
-
-
