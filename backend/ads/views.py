@@ -18,7 +18,7 @@ from django.db.models import (
     Value,
     When,
 )
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Round
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -126,9 +126,12 @@ class AdStatisticsView(ListView):
             ),
             profit=Case(
                 When(budget=0, then=Value(None, output_field=FloatField())),
-                default=ExpressionWrapper(
-                    (F("total_contract_sum") - F("budget")) / F("budget"),
-                    output_field=FloatField(),
+                default=Round(
+                    ExpressionWrapper(
+                        (F("total_contract_sum") - F("budget")) / F("budget"),
+                        output_field=FloatField(),
+                    ),
+                    2,
                 ),
                 output_field=FloatField(),
             ),
