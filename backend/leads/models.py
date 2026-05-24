@@ -28,8 +28,9 @@ class Lead(models.Model):
     email: models.EmailField = models.EmailField(null=False, blank=True)
     advert_name: models.ForeignKey["Advert"] = models.ForeignKey(
         "ads.Advert",
-        on_delete=models.SET_DEFAULT,
-        default="without_adverting",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="leads",
     )
 

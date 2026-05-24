@@ -26,8 +26,9 @@ class Customer(models.Model):
     )
     contract: models.ForeignKey["Contract"] = models.ForeignKey(
         "contracts.Contract",
-        on_delete=models.SET_DEFAULT,
-        default="",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="customers",
     )
 
@@ -45,7 +46,6 @@ class Customer(models.Model):
         ], [{"date": contract.start_date + contract.duration} for contract in contracts]
 
     def __str__(self):
-        return (
-            f"{self.lead.first_name} {self.lead.last_name}-"
-            f"{self.contract.name}{self.contract.start_date}"
-        )
+        lead_name = self.lead.first_name if self.lead else "Без лида"
+        contract_name = self.contract.name if self.contract else "Без контракта"
+        return f"{lead_name} - {contract_name}"
