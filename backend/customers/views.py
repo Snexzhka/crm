@@ -81,7 +81,7 @@ class CustomerUpdateView(PermissionRequiredMixin, UpdateView):
 
 class CustomerDeleteView(UserPassesTestMixin, DeleteView):
     """
-    Представление для удаления активных клиентов. Для обновления нужны права админа.
+    Представление для удаления активных клиентов. Для удаления нужны права админа.
     """
 
     def test_func(self):

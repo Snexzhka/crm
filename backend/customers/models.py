@@ -21,7 +21,7 @@ class Customer(models.Model):
 
     lead: models.ForeignKey["Lead"] = models.ForeignKey(
         "leads.Lead",
-        on_delete=models.DO_NOTHING,
+        on_delete=models.PROTECT,
         related_name="customers",
     )
     contract: models.ForeignKey["Contract"] = models.ForeignKey(
