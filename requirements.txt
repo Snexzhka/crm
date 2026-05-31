@@ -27,5 +27,4 @@ types-PyYAML==6.0.12.20260518
 typing_extensions==4.15.0
 uritemplate==4.2.0
 gunicorn==26.0.0
-dotenv==0.9.9
 python-dotenv==1.2.2
