@@ -3,7 +3,7 @@
 """
 
 from django.urls import path
-from rest_framework.routers import DefaultRouter
+#from rest_framework.routers import DefaultRouter
 
 from .views import (
     AdStatisticsView,
@@ -16,7 +16,7 @@ from .views import (
 
 app_name = "ads"
 
-routers = DefaultRouter()
+#routers = DefaultRouter()
 
 urlpatterns = [
     path("", AdventView.as_view(), name="ads-list"),
