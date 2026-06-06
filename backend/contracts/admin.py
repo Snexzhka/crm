@@ -33,3 +33,12 @@ class ContractsAdmin(admin.ModelAdmin):
         "duration",
         "lead__last_name",
     ]
+
+    fieldsets = (
+        (None, {
+            "fields": ("name", "products", "duration", "cost", "lead", "file"),
+            "help_texts": {
+                "duration": "Введите продолжительность в формате: '5 days', '1 day 12 hours'",
+            }
+        }),
+    )

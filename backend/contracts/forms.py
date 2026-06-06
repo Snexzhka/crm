@@ -17,6 +17,12 @@ class ContractForm(forms.ModelForm):
         model = Contract
         fields = "name", "products", "duration", "file", "cost", "lead"
 
+        widgets = {
+            "duration": forms.TextInput(attrs={
+                "placeholder": "Пример: 5 days, 1 day 12 hours, 2 weeks"
+            }),
+        }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["file"].required = False
